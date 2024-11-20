@@ -64,7 +64,7 @@ class PostMeta {
 	 * @return void
 	 */
 	public function importPostMeta() {
-		$postsPerAction  = 100;
+		$postsPerAction  = apply_filters( 'aioseo_import_seopress_posts_per_action', 100 );
 		$publicPostTypes = implode( "', '", aioseo()->helpers->getPublicPostTypes( true ) );
 		$timeStarted     = gmdate( 'Y-m-d H:i:s', aioseo()->core->cache->get( 'import_post_meta_seopress' ) );
 
@@ -136,7 +136,16 @@ class PostMeta {
 	 * @return array           The meta data.
 	 */
 	public function getMetaData( $postMeta, $postId ) { // phpcs:ignore VariableAnalysis.CodeAnalysis.VariableAnalysis.UnusedVariable
-		$meta = [];
+		$meta = [
+			'robots_default'      => true,
+			'robots_noarchive'    => false,
+			'canonical_url'       => '',
+			'robots_nofollow'     => false,
+			'robots_noimageindex' => false,
+			'robots_noindex'      => false,
+			'robots_noodp'        => false,
+			'robots_nosnippet'    => false
+		];
 		foreach ( $postMeta as $record ) {
 			$name  = $record->meta_key;
 			$value = $record->meta_value;
@@ -157,7 +166,7 @@ class PostMeta {
 						$keyphraseArray['additional'][] = [ 'keyphrase' => aioseo()->helpers->sanitizeOption( $keyphrase ) ];
 					}
 
-					$meta['keyphrases'] = wp_json_encode( $keyphraseArray );
+					$meta['keyphrases'] = $keyphraseArray;
 					break;
 				case '_seopress_robots_snippet':
 				case '_seopress_robots_archive':
@@ -166,17 +175,17 @@ class PostMeta {
 				case '_seopress_robots_follow':
 				case '_seopress_robots_index':
 					if ( 'yes' === $value ) {
-						$meta['robots_default']       = false;
+						$meta['robots_default']             = false;
 						$meta[ $this->mappedMeta[ $name ] ] = true;
 					}
 					break;
 				case '_seopress_social_twitter_img':
-					$meta['twitter_use_og']       = false;
-					$meta['twitter_image_type']   = 'custom_image';
+					$meta['twitter_use_og']             = false;
+					$meta['twitter_image_type']         = 'custom_image';
 					$meta[ $this->mappedMeta[ $name ] ] = esc_url( $value );
 					break;
 				case '_seopress_social_fb_img':
-					$meta['og_image_type']        = 'custom_image';
+					$meta['og_image_type']              = 'custom_image';
 					$meta[ $this->mappedMeta[ $name ] ] = esc_url( $value );
 					break;
 				case '_seopress_robots_primary_cat':

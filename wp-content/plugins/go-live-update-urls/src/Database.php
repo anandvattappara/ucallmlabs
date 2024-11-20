@@ -18,7 +18,7 @@ class Database {
 	 *
 	 * @since   5.0.0
 	 *
-	 * @return array( %table_name% => %table_column% )
+	 * @return array<string, string> - array( %table_name% => %table_column% )
 	 */
 	public function get_serialized_tables() {
 		global $wpdb;
@@ -32,13 +32,10 @@ class Database {
 			$wpdb->usermeta    => 'meta_value',
 		];
 
-		// We are not going to update site meta if we are not on main blog.
+		// We are not going to update site meta if we are not on the main blog.
 		if ( is_multisite() ) {
 			$serialized_tables[ $wpdb->sitemeta ] = 'meta_value';
-			// WP 5.0.0+.
-			if ( isset( $wpdb->blogmeta ) ) {
-				$serialized_tables[ $wpdb->blogmeta ] = 'meta_value';
-			}
+			$serialized_tables[ $wpdb->blogmeta ] = 'meta_value';
 		}
 
 		return apply_filters( 'go-live-update-urls/database/serialized-tables', $serialized_tables );
@@ -136,7 +133,7 @@ class Database {
 	 *
 	 * @since 5.0.1
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function get_all_table_names() {
 		global $wpdb;
@@ -160,9 +157,9 @@ class Database {
 	 *
 	 * @since 5.0.0
 	 *
-	 * @param string $old_url - the old URL.
-	 * @param string $new_url - the new URL.
-	 * @param array  $tables  - the tables we are going to update.
+	 * @param string   $old_url - the old URL.
+	 * @param string   $new_url - the new URL.
+	 * @param string[] $tables  - the tables we are going to update.
 	 *
 	 * @return array<string, int>
 	 */
@@ -284,7 +281,7 @@ class Database {
 	 * @return bool
 	 */
 	protected function supports_skipping( $table ) {
-		if ( empty( Skip_Rows::instance()->get_skipped( $table ) ) || null === Skip_Rows::instance()->get_primary_key( $table ) ) {
+		if ( null === Skip_Rows::instance()->get_skipped( $table ) || null === Skip_Rows::instance()->get_primary_key( $table ) ) {
 			return false;
 		}
 

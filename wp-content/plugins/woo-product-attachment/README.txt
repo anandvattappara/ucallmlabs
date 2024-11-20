@@ -3,143 +3,79 @@ Contributors: dots,jitendrabanjara1991,niravcse006
 Donate link: https://www.thedotstore.com/
 Tags: attachment,woocommerce,productattachment,orderattachment,dots
 Requires at least: 5.0
-Tested up to: 6.4.3
-WC tested up to: 8.7.0
-Stable tag: 2.2.3
+Tested up to: 6.5.4
+WC tested up to: 8.9.3
+Stable tag: 2.3.0
 Requires PHP: 7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Product Attachment for WooCommerce Plugin will help you to attach/ upload any kind of files for a customer orders. You can attach any type of file like Images, documents, videos and many more
+Plugin lets you easily upload any file type (images, documents, videos, etc.) to customer orders.
 
 == Description ==
 
-Tired of customers asking for more product information before they make a purchase? Bridge the gap with our <a href="https://bit.ly/3qjiooM">Product Attachment Plugin For WooCommerce.</a>
+<a href="https://bit.ly/3qjiooM"> Product Attachment for WooCommerce </a> Plugin will help you to attach/ upload any kind of files for a customer orders.
 
-Our plugin allows you to <strong>attach any form of detailed product information directly on your product pages.</strong> Whether it's a size guide, care instructions, or a technical specification sheet, give your customers everything they need to make an informed decision.
+You can attach any type of file like Images, documents, videos and many more.
 
+Create a Product Attachment for WooCommerce Plugin let admin user add attachments to products and offer them when customer purchases the product.
+
+Attachment download link can be set to auto-expire after a set period of time. Attachments can also be shown on product details page.
+
+Pro Plugin Demo: <a href="https://pluginsdemo.thedotstore.com/woocommerce-product-attachment/"> View Demo </a>
 
 [youtube https://www.youtube.com/watch?v=w6PxtXKwG60]
 
-<strong>Plugin Demo:</strong> <a href="https://pluginsdemo.thedotstore.com/woocommerce-product-attachment/"> View Demo </a>
+= HOW IT WORKS? =
+* Store Owner will be able to attach single or multiple files directly from the "product Edit Page"?.
+*  Attachments can be downloadable/viewable on the Order details and/or Product pages. In the case of visibility on order details page, every file can be visible for different order statuses.
 
-== ⚙️ HOW IT WORKS? ==
+<strong>Note:</strong> Some type document WordPress does not allow to upload for security reasons so you can add below code in wp-config.php file for allowing all type upload in Attachment.
 
-<ul>
-<li>Store owners will be able to attach single or multiple files directly from the Product Edit Page.</li>
-<li>Attachments can be downloadable/viewable on the Order Details and/or Product pages. In the case of visibility on the Order Details page, each file can be made visible for different order statuses.</li>
-</ul>
+` define('ALLOW_UNFILTERED_UPLOADS', true); `
 
-<strong>Note:</strong> WordPress does not allow uploading some types of documents for security reasons. However, you can add the code below in your wp-config.php file to allow all types of uploads in Attachments:
+= Key Features =
 
-<pre> define(‘ALLOW_UNFILTERED_UPLOADS’, true); </pre>
+* Multiple attachments can be added
+* Attachments can be downloadable in the Order details OR Product Detail pages.
+* This Attachment is set status(Pending payment, Processing, On hold, Completed, Cancelled, Refunded, Failed) after that match this status then auto enable on each order download available.
+* Set auto expiry date for order attachment ( Download link Expire)
+* Enable attachment on Product page.
+* Any type attachments you can attach with order
+* Add Attachment in all  products.
+* Each Attachment have own settings (Name, Description, Uploads file, select Order status, Set expiry Date and more)
 
+<blockquote>
 
-== 📒 KEY FEATURES ==
+= Product Attachment for WooCommerce Pro version: =
 
-* Attach an unlimited number of files to your product pages.
-* Support for multiple file types, including PDF, JPG, videos, and more.
-* Easily manage attachments for each product right from the product edit page.
-* Assign attachments to multiple products at once for efficient management.
-* Customize the display of attachments for users, based on logged-in status.
-* Intuitive user interface that seamlessly integrates with your WooCommerce product pages.
-* Downloadable files can also be served as secure, expiring download links to protect your content.
+Need even more? upgrade to <a href="https://bit.ly/3qjiooM">Product Attachment for WooCommerce Pro</a> version and get access to all extra features available in Product Attachment for WooCommerce Pro.
 
-== 📣 PREMIUM: Product Attachment Plugin —  <a href="https://bit.ly/3qjiooM">Try the Pro Version Today!</a> ==
-
-== 🚀 PLUGIN USE CASES ==
+= Add attachment with below key features =
 <ol>
-<li><strong>Comprehensive Product</strong> Manuals: Attach user manuals to help customers fully understand how to use your products.</li>
-<li><strong>Sizing Information:</strong> Upload size charts for clothing items to decrease the rate of returns and exchanges.</li>
-<li><strong>Handling Warranty Information:</strong> Attach warranty documents for electronics and other applicable goods.</li>
-<li><strong>Include Recipes:</strong> For food-related items or kitchenware, add recipes or usage guides to enhance customer value.</li>
-<li><strong>Detailed Specifications:</strong> For technical products, include detailed specifications sheets for your B2B customers.</li>
-<li><strong>Attach Licensing Information:</strong> Ideal for digital products or products that have associated licensing like software or media.</li>
+<li>Enable attachment on Product page</li>
+<li>Add Attachment in all products/variable Products</li>
+<li>Bulk products attachments assign directly to multiple products</li>
+<li>Bulk products attachments assign directly to categories</li>
+<li>Include/Exclude selected Products and Categories</li>
+<li>Select Attachment Type with File Upload or External URL</li>
+<li>Any type of attachments can attach with the order. Includes: File type – Doc, JPG, Videos, PDF and more.</li>
+<li>Each Attachment have its own settings (Name, Description, Uploads file, select Order status, Set expiry Date and more)</li>
+<li>[New]Enable or disable attachment on email or not</li>
 </ol>
 
-== ⭐ REVIEWS (5-star by 100+ users) ==
+</blockquote>
 
-* "This plugin saved us tons of time on customer support." - Sarah K.
-* "A must-have for stores with products that need instructions." - James L.
-* "Seamless integration and really user-friendly!" - Monica R.
-* "Our customers are much happier now that we use this plugin. Thanks!" - Carlos D.
-
-
-== 👀 WHAT MAKES US STAND OUT ==
-
-Our Product Attachment Plugin stands out because it's designed with both store owners and customers in mind.
-
-* <strong>User-Centric Design:</strong> We ensure that our plugins are built to be user-friendly, which makes them accessible to both the tech-savvy and the not-so-tech-savvy alike.
-* <strong>Efficient Management:</strong> The bulk upload and assignment features of our plugin save you valuable time when managing your product attachments.
-* <strong>Customer Satisfaction:</strong> Providing comprehensive product information has been shown to improve customer satisfaction and confidence in their purchases.
-* <strong>Security-Focused:</strong> We prioritize the security of your downloadable content, making sure only authorized users can access it.
-
-
-Empower your WooCommerce store with our Product Attachment Plugin and provide your customers with all the details they need to happily complete their purchase.
-
-== 📣 PREMIUM: Product Attachment Plugin —  <a href="https://bit.ly/3qjiooM">Try the Pro Version Today!</a> ==
-
-
-== ✅ NEED EVEN MORE FEATURES? ==
-
-Upgrade to <a href="https://bit.ly/3qjiooM">Product Attachment Plugin PRO</a> to get all the advanced features.
-
-
-* Enable attachment on Product page
-* Add Attachment in all products/variable Products
-* Bulk products attachments assign directly to multiple products
-* Bulk products attachments assign directly to categories
-* Include/Exclude selected Products and Categories
-* Select Attachment Type with File Upload or External URL
-* Any type of attachments can attach with the order. Includes: File type – Doc, JPG, Videos, PDF and more.
-* Each Attachment have its own settings (Name, Description, Uploads file, select Order status, Set expiry Date and more)
-* Enable or disable attachment on email or not
-
-
-== 💁 How to’s Plugin Guide ==
-
-🔖 <a href="https://www.thedotstore.com/add-email-attachment-woocommerce-orders/">How to add an Attachment in WooCommerce Order Emails</a>
-🔖 <a href="https://www.thedotstore.com/using-woocommerce-order-attachment-button/">How to Add Attachment Button and Show it on Product Pages?</a>
-🔖 <a href="https://www.thedotstore.com/add-pdf-download-to-woocommerce-product/">How to Attach a Downloadable PDF To WooCommerce Products</a>
-🔖 <a href="https://www.thedotstore.com/order-attachment-based-woocommerce-order-status/">How to showcase order email attachment based on WooCommerce order status</a>
-🔖 <a href="https://www.thedotstore.com/display-user-role-based-product-attachment/">How to display product attachment for different types of users in your WooCommerce Store</a>
-
-
-== 📣 PREMIUM: Product Attachment Plugin —  <a href="https://bit.ly/3qjiooM">Try the Pro Version Today!</a> ==
-
-
-== ☎️ CONTACT US ==
-	
-<ul>
-<li><strong>Free plugin:</strong> Need Technical Help? - <a href ="https://wordpress.org/support/plugin/woo-product-attachment/" target="_blank">Click here</a></li>
-<li><strong>Pro Plugin:</strong>  PRE-SALE Questions - <a href ="https://www.thedotstore.com/support/" target="_blank">Click here</a> or <a href ="https://docs.thedotstore.com/" target="_blank">Review Help Document</a>
-</li>
-</ul>
-
-== 💎 EXPLORE OUR OTHER PLUGINS TO SUPERCHARGE YOUR WEBSITE
-
-== 👉 Premium WooCommerce Plugins list ==
-
+= Explore our other plugins and theme to supercharge your WordPress website: =
 <ol>
-<li>
-<a href ="https://www.thedotstore.com/flat-rate-shipping-plugin-for-woocommerce/" target="_blank">Flat-rate shipping plugins for WooCommerce</a></li>
-<li><a href ="https://www.thedotstore.com/woocommerce-extra-fees-plugin" target="_blank">WooCommerce Extra Fees</li>
-<li><a href ="https://www.thedotstore.com/hide-shipping-method-for-woocommerce" target="_blank">Hide Shipping Method For WooCommerce</a></li>
-<li><a href ="https://www.thedotstore.com/woocommerce-product-attachment" target="_blank">Product Attachment For WooCommerce</a></li>
-<li><a href ="https://www.thedotstore.com/woocommerce-advanced-product-size-charts/" target="_blank">Advanced Product Size Charts Plugin</a></li>
-<li><a href ="https://www.thedotstore.com/product-sample-woocommerce/" target="_blank">Product Sample for WooCommerce</a></li>
-<li><a href ="https://www.thedotstore.com/woocommerce-blocker-lite-prevent-fake-orders-blacklist-fraud-customers/" target="_blank">Blocker – Prevent Fake Orders And Blacklist Fraud Customers</a></li>
-<li><a href ="http://www.thedotstore.com/woocommerce-enhanced-ecommerce-analytics-integration-with-conversion-tracking" target="_blank">Enhanced Ecommerce Google Analytics for WooCommerce</a></li>
-<li><a href ="https://www.thedotstore.com/conditional-payments-for-woocommerce/" target="_blank">Conditional Payments For WooCommerce</a></li>
-<li><a href ="https://www.thedotstore.com/woocommerce-advanced-usps-shipping-method/" target="_blank">Advanced USPS Shipping Plugin</a></li>
-<li><a href ="https://www.thedotstore.com/woocommerce-multi-vendor-shipping-addon/" target="_blank">WooCommerce Multi-Vendor Shipping Addon</a></li>
-<li><a href ="https://www.thedotstore.com/woocommerce-category-banner-management/" target="_blank">Category Banner Management for Woocommerce</a></li>
-<li><a href ="https://www.thedotstore.com/woocommerce-product-finder" target="_blank">Product Finder For WooCommerce</a></li>
-<li><a href ="https://www.thedotstore.com/woocommerce-conditional-discount-rules-for-checkout" target="_blank">Conditional Discount Rules For WooCommerce Checkout</a></li>
-<li><a href ="https://www.thedotstore.com/woocommerce-checkout-for-digital-goods/" target="_blank">WooCommerce Checkout For Digital Goods</a></li>
-<li><a href ="https://www.thedotstore.com/attribute-stock-woocommerce/" target="_blank">WooCommerce Attribute Stock</a></li>
+<li> <a href ="http://www.thedotstore.com/advanced-flat-rate-shipping-method-for-woocommerce">Advance Flat Rate Shipping Method For WooCommerce</a></li>
+<li> <a href ="https://www.thedotstore.com/woocommerce-blocker-lite-prevent-fake-orders-blacklist-fraud-customers/">Blocker – Prevent Fake Orders And Blacklist Fraud Customers for WooCommerce </a></li>
+<li> <a href ="http://www.thedotstore.com/woocommerce-enhanced-ecommerce-analytics-integration-with-conversion-tracking">Enhanced Ecommerce Google Analytics for WooCommerce</a></li>
+<li> <a href ="https://www.thedotstore.com/woocommerce-category-banner-management/">Category Banner Management for Woocommerce</a></li>
+<li> <a href ="https://www.thedotstore.com/woocommerce-conditional-product-fees-checkout/">Conditional Product Fees For WooCommerce Checkout</a></li>
+<li> <a href ="https://www.thedotstore.com/woocommerce-advanced-product-size-charts/">Advanced Product Size Charts for WooCommerce</a></li>
+<li> <a href ="http://www.thedotstore.com/advance-menu-manager-wordpress/">Advance Menu Manager for WordPress</a></li>
 </ol>
-
 
 == Installation ==
 
@@ -152,42 +88,21 @@ e.g.
 
 == Frequently Asked Questions ==
 
-= Can I upload multiple attachments for a single product using the Product Attachment for WooCommerce plugin? =
+= Q. Is it possible to attach Multiple attachments by Product Attachment for WooCommerce. =
 
-Absolutely! The Product Attachment for WooCommerce plugin allows you to add numerous attachments to your products. These can include images, documents, videos, and more, enriching your product pages with a variety of content.
+Ans: Yes, you can upload multiple attachments like Images, documents, videos and many more by Product Attachment.(Product Attachment for WooCommerce)
 
-= How can I display a downloadable attachment link on the product details and on the order completion page? =
+= Q. How do I set downloadable attachment link on product detail pages and Completed order? =
 
-To display downloadable attachments on your product details page and after an order is completed, simply enable the option "Show on Product page" and set the order status to "Completed" within the plugin settings. This will make the attachments visible on the respective product page and to customers upon order completion.
+Ans: Yes, you have to enable “show on Product page�? option and select order status “Completed�?. After that it will be visible on product page and Completed order page.(Product Attachment for WooCommerce)
 
-= What is the process for setting a downloadable attachment link to be available based on the order status? =
+= Q. How do I set downloadable attachment link as per order status? =
 
-The WooCommerce Product Attachment plugin allows you to display downloadable links according to different order statuses. You can configure it to work with various statuses such as Pending Payment, Processing, On Hold, Completed, Cancelled, Refunded, or Failed. Once the customer’s order matches the status you’ve selected, the download will be automatically available.
+Ans: By Product Attachment for WooCommerce plugin you can downloadable attachment link as per order status. You can set on Pending payment, Processing, On hold, Completed, Cancelled, Refunded, Failed) after that match this status then auto enable on each order download available.
 
-= How can I set an expiry date for a downloadable product attachment? =
+= Q. How do set auto expiry date for order attachment ( Download link Expire)? =
 
-With the plugin, you can set expiration dates for your product attachments. Enable the "Set date expires" feature, and specify the expiry date for the attachment. After this date passes, new orders will no longer have access to the attachments for download.
-
-= Are there any limitations to the types of files I can attach to products? =
-
-The WooCommerce Product Attachment plugin supports unlimited attachments in a wide array of formats, offering great flexibility for providing detailed product information.
-
-= Can I customize how attachments are displayed to the customers? =
-
-Yes, you have full control over the presentation of attachments. You can tailor the display according to your website’s styling and customer preferences for a seamless shopping experience.
-
-= Is it possible to track which attachments are being downloaded the most? =
-
-While the plugin focuses on the attachment of files, it does not inherently track the download frequency. However, you can use additional analytics tools to monitor download trends for your attachments.
-
-= How can I provide attachments in multiple languages? =
-
-You can upload separate attachments for each language if you're using a multilingual setup. Ensure that each file is associated with the correct language for an optimized international shopping experience.
-
-= Can attachments still be accessed by customers who made a purchase before the attachment was added? =
-
-Typically, attachments are accessed based on the state of the order at the time of purchase. However, you can update past orders to include new attachments manually if required.
-
+Ans: By Product Attachment for WooCommerce plugin you can enable “set date expires�? option. After that you have set expiry date. If an order is placed after the  set expiry date, then attachments will be no longer visible for download.
 
 
 == Screenshots ==
@@ -205,6 +120,14 @@ Typically, attachments are accessed based on the state of the order at the time 
 11.
 
 == Changelog ==
+= 2.3.0 =
+* [Bug Fix] Minor fixes related to edit product attachments
+* [Bug Fix] Minor fixes related to the order attachments
+* [Enhancement] Plugin UI enhancement
+* [Enhancement] Plugin compatibility with PHP 8.2.x
+* [Enhancement] Compatible with WooCommerce 8.9.x
+* [Enhancement] Compatible with WordPress 6.5.x
+
 = 2.2.3 =
 * [Bug Fix] Minor bug fixed
 * [Enhancement] Compatible with WooCommerce 8.7.x
@@ -212,6 +135,7 @@ Typically, attachments are accessed based on the state of the order at the time 
 
 = 2.2.2 =
 * [Bug Fix] Resolved issue with empty brackets appearing when using external URLs for downloads.
+* [Enhancement] Added product page attachment sorting
 * [Enhancement] Compatible with WooCommerce 8.7.x
 * [Enhancement] Compatible with WordPress 6.4.x
 

@@ -647,8 +647,14 @@ if( !function_exists('ecomall_breadcrumbs') ){
 					}
 					$output .= $before . get_the_title() . $after;
 			    }else{
-					$cat = get_the_category(); $cat = $cat[0];
-					$output .= get_category_parents($cat, true, ' ' . $delimiter . ' ');
+					//$cat = get_the_category(); $cat = $cat[0];
+					$categories = get_the_category();
+					if ( ! empty( $categories ) ) {
+						foreach( $categories as $category ) {
+							$output .= '<a href="' . esc_url( get_category_link( $category->term_id ) ) . '" alt="' . esc_attr( sprintf( __( 'View all posts in %s', 'textdomain' ), $category->name ) ) . '">' . esc_html( $category->name ) . '</a>' .  $delimiter;
+						}
+					}
+					//$output .= get_category_parents($cat, true, ' ' . $delimiter . ' ');
 					$output .= $before . get_the_title() . $after;
 			    }
 			}elseif( !is_single() && !is_page() && get_post_type() != 'post' && !is_404() ){

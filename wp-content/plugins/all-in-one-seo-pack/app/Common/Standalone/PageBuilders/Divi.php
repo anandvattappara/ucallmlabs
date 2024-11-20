@@ -210,7 +210,7 @@ class Divi extends Base {
 	 */
 	public function limitModifiedDate( $postId ) {
 		// This method is supposed to be used in the `wp_ajax_et_fb_ajax_save` action.
-		if ( empty( $_REQUEST['et_fb_save_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_REQUEST['et_fb_save_nonce'] ), 'et_fb_save_nonce' ) ) {
+		if ( empty( $_REQUEST['et_fb_save_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['et_fb_save_nonce'] ) ), 'et_fb_save_nonce' ) ) {
 			return false;
 		}
 
@@ -220,22 +220,5 @@ class Divi extends Base {
 		}
 
 		return ! empty( $_REQUEST['options']['conditional_tags']['aioseo_limit_modified_date'] );
-	}
-
-	/**
-	 * Returns the processed page builder content.
-	 *
-	 * @since 4.6.1
-	 *
-	 * @param  int    $postId  The post id.
-	 * @param  string $content The raw content.
-	 * @return string          The processed content.
-	 */
-	public function processContent( $postId, $content = '' ) {
-		if ( function_exists( 'et_builder_add_main_elements' ) && ! did_action( 'et_builder_ready' ) ) {
-			et_builder_add_main_elements();
-		}
-
-		return parent::processContent( $postId, $content );
 	}
 }

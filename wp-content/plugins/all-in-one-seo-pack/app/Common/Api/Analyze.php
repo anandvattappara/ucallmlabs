@@ -48,14 +48,14 @@ class Analyze {
 			] );
 
 			$responseCode[ $analyzeOrHomeUrl ] = wp_remote_retrieve_response_code( $response );
-			$responseBody[ $analyzeOrHomeUrl ] = json_decode( wp_remote_retrieve_body( $response ) );
+			$responseBody[ $analyzeOrHomeUrl ] = json_decode( wp_remote_retrieve_body( $response ), true );
 
 			aioseo()->core->cache->update( 'analyze_site_code', $responseCode, 10 * MINUTE_IN_SECONDS );
 			aioseo()->core->cache->update( 'analyze_site_body', $responseBody, 10 * MINUTE_IN_SECONDS );
 		}
 
-		if ( 200 !== $responseCode[ $analyzeOrHomeUrl ] || empty( $responseBody[ $analyzeOrHomeUrl ]->success ) || ! empty( $responseBody[ $analyzeOrHomeUrl ]->error ) ) {
-			if ( ! empty( $responseBody[ $analyzeOrHomeUrl ]->error ) && 'invalid-token' === $responseBody[ $analyzeOrHomeUrl ]->error ) {
+		if ( 200 !== $responseCode[ $analyzeOrHomeUrl ] || empty( $responseBody[ $analyzeOrHomeUrl ]['success'] ) || ! empty( $responseBody[ $analyzeOrHomeUrl ]['error'] ) ) {
+			if ( ! empty( $responseBody[ $analyzeOrHomeUrl ]['error'] ) && 'invalid-token' === $responseBody[ $analyzeOrHomeUrl ]['error'] ) {
 				aioseo()->internalOptions->internal->siteAnalysis->reset();
 			}
 
@@ -79,15 +79,10 @@ class Analyze {
 			return new \WP_REST_Response( $competitors, 200 );
 		}
 
-		$results = $responseBody[ $analyzeOrHomeUrl ]->results;
-
-		// Image alt attributes get stripped by sanitize_text_field, so we need to adjust the way they are stored to keep them intact.
-		if ( ! empty( $results->basic->noImgAltAtts->value ) ) {
-			$results->basic->noImgAltAtts->value = array_map( 'htmlentities', $results->basic->noImgAltAtts->value );
-		}
+		$results = $responseBody[ $analyzeOrHomeUrl ]['results'];
 
 		aioseo()->internalOptions->internal->siteAnalysis->results = wp_json_encode( $results );
-		aioseo()->internalOptions->internal->siteAnalysis->score   = $responseBody[ $analyzeOrHomeUrl ]->score;
+		aioseo()->internalOptions->internal->siteAnalysis->score   = $responseBody[ $analyzeOrHomeUrl ]['score'];
 
 		return new \WP_REST_Response( $responseBody[ $analyzeOrHomeUrl ], 200 );
 	}

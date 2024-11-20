@@ -30,6 +30,9 @@ class Xsl {
 		preg_match( '/\/(.*?)-?sitemap([0-9]*)\.xml/', $sitemapPath, $sitemapInfo );
 		$sitemapName = ! empty( $sitemapInfo[1] ) ? strtoupper( $sitemapInfo[1] ) : '';
 
+		// Remove everything after ? from sitemapPath to avoid caching issues.
+		$sitemapPath = wp_parse_url( $sitemapPath, PHP_URL_PATH ) ?: '';
+
 		if ( ! empty( $sitemapInfo[1] ) ) {
 			switch ( $sitemapInfo[1] ) {
 				case 'addl':
@@ -85,6 +88,8 @@ class Xsl {
 		$datetime   = [];
 		$dateFormat = get_option( 'date_format' );
 		$timeFormat = get_option( 'time_format' );
+
+		$entries = aioseo()->sitemap->helpers->decodeSitemapEntries( $entries );
 
 		foreach ( $entries as $index ) {
 			$url = ! empty( $index['guid'] ) ? $index['guid'] : $index['loc'];

@@ -33,7 +33,7 @@ if ( 'incl' == get_option( 'woocommerce_tax_display_cart' ) ) {
 
 do_action( 'addify_rfq_before_mini_quote' ); ?>
 
-<div class="mini-quote-dropdown">
+<div class="cart-dropdown-form dropdown-container woocommerce">
 	<?php if ( ! empty( WC()->session->get( 'quotes' ) ) ) : ?>
 
 	<ul class="addify-rfq-mini-cart quote_list product_list_widget">
@@ -157,7 +157,7 @@ do_action( 'addify_rfq_before_mini_quote' ); ?>
 	<?php endif; ?>
 
 		<?php do_action( 'addify_rfq_widget_shopping_quote_before_buttons' ); ?>
-
+<div  style="width:100%; clear:both">&nbsp;&nbsp;</div>
 	<div class="addify-rfq-mini-cart__buttons buttons"><?php do_action( 'addify_rfq_widget_shopping_quote_buttons' ); ?>
 		<a href="<?php echo esc_url( $pageurl ); ?>" class="btn wc-forward" id="view-quote">
 			<?php echo esc_html__( ' View Quote', 'addify_rfq' ); ?>

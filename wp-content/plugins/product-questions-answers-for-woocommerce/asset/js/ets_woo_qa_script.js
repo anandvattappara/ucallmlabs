@@ -38,29 +38,49 @@ jQuery(document).ready(function(){
 		jQuery(".ets-dis-message-error").text("");
 	});
 
-	jQuery('#ets-load-more').click(function(e){
-		e.preventDefault();  
-		let submit = jQuery ("#ets-qus-form").serialize(); 
-		let qalength = jQuery('.ets_pro_qa_length p').text(); 
-		let offset = jQuery('#ets_product_qa_length p').text(); 
-		if ( typeof offset == 'undefined' ) 
-			offset = 0 ; 
-		jQuery.ajax({ 
-			url: etsWooQaParams.admin_ajax,
-			type: 'GET',  
-			dataType: "JSON",
-			data: 'action=ets_product_qa_load_more&' + submit + '&offset=' + offset +'&load_qa_nonce=' + etsWooQaParams.load_qa_nonce,
-			success: function(res) {  
-				offset = res.offset;  
-				jQuery('.table1').append(res.htmlData);  
-				jQuery('.ets-accordion-response-add').append(res.htmlData);
-				jQuery('#ets_product_qa_length p').html(offset).hide();
-				if(offset >= qalength ){
-					jQuery("#ets-load-more").hide();
-				} 
-            }
-        }); 
-	}); 
+	jQuery('.ets-qa-load-more').click(function(e) {
+    	e.preventDefault();
+    	let clickedButton = jQuery(this);
+    	let productId = clickedButton.parent().find("[name='sh-prd-id']").val();
+    	let formPrdId = jQuery('#custId').val();
+   		let accordionList = clickedButton.parent().find('.ets-accordion-list-qa');
+   		let tableList = clickedButton.parent().find('.ets-list-table');
+    	let qaLength = clickedButton.siblings('.ets_pro_qa_length').find('p').text();
+    	let offset = clickedButton.siblings('#ets_product_qa_length').find('p').text();
+
+	    let data = {
+	        action: 'ets_product_qa_load_more',
+	        offset: offset,
+	        load_qa_nonce: etsWooQaParams.load_qa_nonce
+	    };
+
+	    if (productId) {
+	        data.product_id = productId;
+	    } else {
+	        data.product_id = formPrdId;
+	    }
+
+	    if (offset == '') {
+	        offset = 0;
+	    }
+    
+
+	    jQuery.ajax({
+	        url: etsWooQaParams.admin_ajax,
+	        type: 'GET',
+	        dataType: "JSON",
+	        data: data,
+	        success: function(res) {
+	            offset = res.offset;
+	            accordionList.append(res.htmlData);
+	            tableList.append(res.htmlData);
+	            clickedButton.siblings('#ets_product_qa_length').find('p').html(offset).hide();
+	            if(offset >= qaLength ){
+		            clickedButton.hide();
+		        }
+	        }
+	    });
+	});	
 }); 
 
 jQuery(document).on('click','.ets-accordion',function(){

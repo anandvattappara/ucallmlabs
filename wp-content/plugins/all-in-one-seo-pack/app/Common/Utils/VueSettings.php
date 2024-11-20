@@ -118,6 +118,8 @@ class VueSettings {
 			'404Settings'                  => true,
 			'userProfiles'                 => true,
 			'queryArgLogs'                 => true,
+			'writingAssistantSettings'     => true,
+			'writingAssistantCta'          => true
 		],
 		'toggledRadio'    => [
 			'breadcrumbsShowMoreSeparators' => false,
@@ -125,7 +127,9 @@ class VueSettings {
 			'overviewPostType'              => 'post',
 		],
 		'dismissedAlerts' => [
-			'searchStatisticsContentRankings' => false
+			'searchStatisticsContentRankings' => false,
+			'searchConsoleNotConnected'       => false,
+			'searchConsoleSitemapErrors'      => false
 		],
 		'internalTabs'    => [
 			'authorArchives'    => 'title-description',
@@ -146,8 +150,10 @@ class VueSettings {
 			'searchStatisticsKeywordRankings'    => 20,
 			'searchStatisticsContentRankings'    => 20,
 			'searchStatisticsPostDetailKeywords' => 20,
+			'searchStatisticsKeywordRankTracker' => 20,
 			'queryArgs'                          => 20
-		]
+		],
+		'semrushCountry'  => 'US'
 	];
 
 	/**

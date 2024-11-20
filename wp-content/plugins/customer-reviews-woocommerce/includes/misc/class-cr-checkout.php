@@ -29,16 +29,20 @@ if ( ! class_exists( 'CR_Checkout' ) ) :
 					$this->consent_text = apply_filters( 'wpml_translate_single_string', $this->consent_text, 'ivole', 'ivole_customer_consent_text', $wpml_current_language );
 				}
 				//
-				if ( function_exists( '__experimental_woocommerce_blocks_register_checkout_field' ) ) {
-					__experimental_woocommerce_blocks_register_checkout_field(
-						array(
-							'id'            => 'cusrev/checkout-consent',
-							'label'         => $this->consent_text,
-							'optionalLabel' => $this->consent_text,
-							'location'      => 'additional',
-							'type'          => 'checkbox',
-						)
-					);
+				if ( class_exists( 'WC_Blocks_Utils' ) ) {
+					if ( WC_Blocks_Utils::has_block_in_page( wc_get_page_id( 'checkout' ), 'woocommerce/checkout' ) ) {
+						if ( function_exists( 'woocommerce_register_additional_checkout_field' ) ) {
+							woocommerce_register_additional_checkout_field(
+								array(
+									'id'            => 'cusrev/checkout-consent',
+									'label'         => $this->consent_text,
+									'optionalLabel' => $this->consent_text,
+									'location'      => 'order',
+									'type'          => 'checkbox',
+								)
+							);
+						}
+					}
 				}
 				//
 				add_action( 'woocommerce_checkout_terms_and_conditions', array( $this, 'display_cr_checkbox' ), 40 );
@@ -132,16 +136,18 @@ if ( ! class_exists( 'CR_Checkout' ) ) :
 		public function cr_api_checkbox_meta( $order ) {
 			if ( $order instanceof \WC_Order ) {
 				$consent = 'no';
-				$extra_fields = $order->get_meta( '_additional_fields' );
+
 				if (
-					is_array( $extra_fields ) &&
-					isset( $extra_fields['cusrev/checkout-consent'] ) &&
-					$extra_fields['cusrev/checkout-consent']
+					class_exists( 'Automattic\WooCommerce\Blocks\Package' ) &&
+					class_exists( 'Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields' )
 				) {
-					$consent = 'yes';
-					unset( $extra_fields['cusrev/checkout-consent'] );
-					$order->update_meta_data( '_additional_fields', $extra_fields );
+					$checkout_fields = Automattic\WooCommerce\Blocks\Package::container()->get( Automattic\WooCommerce\Blocks\Domain\Services\CheckoutFields::class );
+					$cr_consent_field = $checkout_fields->get_field_from_object( 'cusrev/checkout-consent', $order );
+					if ( $cr_consent_field ) {
+						$consent = 'yes';
+					}
 				}
+
 				$order->update_meta_data( '_ivole_cr_consent', $consent );
 				$order->save();
 			}

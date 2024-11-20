@@ -86,7 +86,7 @@
                 <div class="wdr-sticky-header" id="ruleHeader">
                     <div class="wdr-enable-rule">
                         <div class="wdr-field-title" style="width: 45%">
-                            <input class="wdr-title" type="text" name="title" placeholder="<?php esc_attr('Rule Title', 'woo-discount-rules'); ?>"
+                            <input class="wdr-title" type="text" name="title" placeholder="<?php esc_attr_e('Rule Title', 'woo-discount-rules'); ?>"
                                    value="<?php echo esc_attr($rule->getTitle()); ?>"><!--awdr-clear-both-->
                         </div><?php
                         $is_rtl_enabled = \Wdr\App\Helpers\Woocommerce::isRTLEnable();

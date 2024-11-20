@@ -3,6 +3,7 @@ namespace Automattic\WooCommerce\Blocks\Assets;
 
 use Automattic\WooCommerce\Blocks\Package;
 use Automattic\WooCommerce\Blocks\Domain\Services\Hydration;
+use Automattic\WooCommerce\Internal\Logging\RemoteLogger;
 use Exception;
 use InvalidArgumentException;
 
@@ -80,24 +81,26 @@ class AssetDataRegistry {
 	 */
 	protected function get_core_data() {
 		return [
-			'adminUrl'           => admin_url(),
-			'countries'          => WC()->countries->get_countries(),
-			'currency'           => $this->get_currency_data(),
-			'currentUserId'      => get_current_user_id(),
-			'currentUserIsAdmin' => current_user_can( 'manage_woocommerce' ),
-			'dateFormat'         => wc_date_format(),
-			'homeUrl'            => esc_url( home_url( '/' ) ),
-			'locale'             => $this->get_locale_data(),
-			'dashboardUrl'       => wc_get_account_endpoint_url( 'dashboard' ),
-			'orderStatuses'      => $this->get_order_statuses(),
-			'placeholderImgSrc'  => wc_placeholder_img_src(),
-			'productsSettings'   => $this->get_products_settings(),
-			'siteTitle'          => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
-			'storePages'         => $this->get_store_pages(),
-			'wcAssetUrl'         => plugins_url( 'assets/', WC_PLUGIN_FILE ),
-			'wcVersion'          => defined( 'WC_VERSION' ) ? WC_VERSION : '',
-			'wpLoginUrl'         => wp_login_url(),
-			'wpVersion'          => get_bloginfo( 'version' ),
+			'adminUrl'               => admin_url(),
+			'countries'              => WC()->countries->get_countries(),
+			'currency'               => $this->get_currency_data(),
+			'currentUserId'          => get_current_user_id(),
+			'currentUserIsAdmin'     => current_user_can( 'manage_woocommerce' ),
+			'currentThemeIsFSETheme' => wc_current_theme_is_fse_theme(),
+			'dateFormat'             => wc_date_format(),
+			'homeUrl'                => esc_url( home_url( '/' ) ),
+			'locale'                 => $this->get_locale_data(),
+			'isRemoteLoggingEnabled' => wc_get_container()->get( RemoteLogger::class )->is_remote_logging_allowed(),
+			'dashboardUrl'           => wc_get_account_endpoint_url( 'dashboard' ),
+			'orderStatuses'          => $this->get_order_statuses(),
+			'placeholderImgSrc'      => wc_placeholder_img_src(),
+			'productsSettings'       => $this->get_products_settings(),
+			'siteTitle'              => wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ),
+			'storePages'             => $this->get_store_pages(),
+			'wcAssetUrl'             => plugins_url( 'assets/', WC_PLUGIN_FILE ),
+			'wcVersion'              => defined( 'WC_VERSION' ) ? WC_VERSION : '',
+			'wpLoginUrl'             => wp_login_url(),
+			'wpVersion'              => get_bloginfo( 'version' ),
 		];
 	}
 
@@ -332,7 +335,7 @@ class AssetDataRegistry {
 	public function hydrate_data_from_api_request( $key, $path, $check_key_exists = false ) {
 		$this->add(
 			$key,
-			function() use ( $path ) {
+			function () use ( $path ) {
 				if ( isset( $this->preloaded_api_requests[ $path ], $this->preloaded_api_requests[ $path ]['body'] ) ) {
 					return $this->preloaded_api_requests[ $path ]['body'];
 				}

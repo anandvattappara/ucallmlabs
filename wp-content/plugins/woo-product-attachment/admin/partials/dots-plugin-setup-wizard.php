@@ -23,7 +23,7 @@ $activate_free_plugin = !empty($require_license) && 'false' === $require_license
 			<div class="ds-wizard-wrap">
 				<div class="ds-wizard-content">
 					<h3 class="cta-title"><?php echo esc_html__( 'Welcome! 🤗', 'woocommerce-product-attachment' ); ?></h3>
-					<img class="ds-wizard-logo" src="<?php echo esc_url( plugin_dir_url( dirname( __FILE__, 2 ) ) . '/admin/images/woo-product-attachment.png' ); ?>"/>
+					<img class="ds-wizard-logo" src="<?php echo esc_url( plugin_dir_url( dirname( __FILE__, 2 ) ) . 'admin/images/woo-product-attachment.png' ); ?>"/>
 					<p><?php echo esc_html__( 'Elevate the customer experience with WooCommerce Product Attachment by offering downloadable files like user guides, certificates, warranty cards, documents, and more.', 'woocommerce-product-attachment' ); ?></p>
 				</div>
 				<div class="ds-wizard-next-step">

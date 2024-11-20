@@ -122,6 +122,19 @@
 									</td>
 								</tr>
 							<?php endif; ?>
+							<?php if ( $reminder_cancelation ) : ?>
+								<tr>
+									<td>
+										<?php echo esc_html__( 'Cancelation reason', 'customer-reviews-woocommerce' ); ?>
+									</td>
+									<td class="cr-reminder-details-help">
+										<?php echo CR_Admin::cr_help_tip( __( 'Details about the reason why this review reminder was canceled', 'customer-reviews-woocommerce' ) ); ?>
+									</td>
+									<td>
+										<?php echo esc_html( $reminder_cancelation ); ?>
+									</td>
+								</tr>
+							<?php endif; ?>
 							<tr>
 								<td>
 									<?php echo esc_html__( 'Verification', 'customer-reviews-woocommerce' ); ?>
@@ -214,8 +227,13 @@
 					<div class="cr-reminder-details-line">
 						<div class="cr-reminder-details-line-h">
 							<?php
-								echo esc_html__( 'Message sent date', 'customer-reviews-woocommerce' ) .
-									CR_Admin::cr_help_tip( __( 'Date when this review reminder was sent to a customer', 'customer-reviews-woocommerce' ) );
+								if ( 'canceled' === $reminder_status_code ) {
+									echo esc_html__( 'Reminder canceled date', 'customer-reviews-woocommerce' ) .
+										CR_Admin::cr_help_tip( __( 'Date when this review reminder was canceled', 'customer-reviews-woocommerce' ) );
+								} else {
+									echo esc_html__( 'Message sent date', 'customer-reviews-woocommerce' ) .
+										CR_Admin::cr_help_tip( __( 'Date when this review reminder was sent to a customer', 'customer-reviews-woocommerce' ) );
+								}
 							?>
 						</div>
 						<span><?php echo esc_html( $reminder_sent ); ?></span>

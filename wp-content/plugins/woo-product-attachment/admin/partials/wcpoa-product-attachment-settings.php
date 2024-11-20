@@ -10,8 +10,6 @@ global
     $i,
     $field
 ;
-$product_id = $post->ID;
-$_product = wc_get_product( $product_id );
 // vars
 $div = array(
     'class'    => 'wcpoa-repeater',
@@ -19,20 +17,18 @@ $div = array(
     'data-max' => ( isset( $field['max'] ) ? $field['max'] : '' ),
 );
 // ensure value is an array
-
-if ( empty($field['value']) ) {
+if ( empty( $field['value'] ) ) {
     $field['value'] = array();
     $div['class'] .= ' -empty';
 }
-
 // rows
-$field['min'] = ( empty($field['min']) ? 0 : $field['min'] );
-$field['max'] = ( empty($field['max']) ? 0 : $field['max'] );
+$field['min'] = ( empty( $field['min'] ) ? 0 : $field['min'] );
+$field['max'] = ( empty( $field['max'] ) ? 0 : $field['max'] );
 // populate the empty row data (used for wcpoacloneindex and min setting)
 $empty_row = array();
 // If there are less values than min, populate the extra values
 if ( $field['min'] ) {
-    for ( $i = 0 ;  $i < $field['min'] ;  $i++ ) {
+    for ($i = 0; $i < $field['min']; $i++) {
         // continue if already have a value
         if ( array_key_exists( $i, $field['value'] ) ) {
             continue;
@@ -43,9 +39,9 @@ if ( $field['min'] ) {
 }
 // If there are more values than man, remove some values
 if ( $field['max'] ) {
-    for ( $i = 0 ;  $i < count( $field['value'] ) ;  $i++ ) {
+    for ($i = 0; $i < count( $field['value'] ); $i++) {
         if ( $i >= $field['max'] ) {
-            unset( $field['value'][$i] );
+            unset($field['value'][$i]);
         }
     }
 }
@@ -54,7 +50,6 @@ $field['value']['wcpoacloneindex'] = $empty_row;
 // show columns
 $show_order = false;
 $show_add = true;
-
 if ( $field['max'] ) {
     if ( (int) $field['max'] === 1 ) {
         $show_order = false;
@@ -63,21 +58,26 @@ if ( $field['max'] ) {
         $show_add = false;
     }
 }
-
 // field wrap
 $before_fields = '';
 $after_fields = '';
-
 if ( 'row' === 'row' ) {
     $before_fields = '<td class="wcpoa-fields -left">';
     $after_fields = '</td>';
 }
-
 // layout
 $div['class'] .= ' -' . 'row';
 $plugin_url = WCPOA_PLUGIN_URL;
-$product_id = $post->ID;
-$product = wc_get_product( $product_id );
+$get_post_id = filter_input( INPUT_GET, 'post', FILTER_SANITIZE_SPECIAL_CHARS );
+if ( isset( $get_post_id ) && !empty( $get_post_id ) ) {
+    $product_id = $get_post_id;
+} else {
+    $product_id = $post->ID;
+}
+$_product = wc_get_product( $product_id );
+if ( !is_a( $_product, 'WC_Product' ) ) {
+    return;
+}
 $wcpoa_attachment_ids = get_post_meta( $product_id, 'wcpoa_attachments_id', true );
 $wcpoa_attachment_name = get_post_meta( $product_id, 'wcpoa_attachment_name', true );
 $wcpoa_attach_type = get_post_meta( $product_id, 'wcpoa_attach_type', true );
@@ -92,27 +92,17 @@ $wcpoa_order_status = array();
 $wcpoa_pd_enable = get_post_meta( $product_id, 'wcpoa_expired_date_enable', true );
 $wcpoa_expired_date = get_post_meta( $product_id, 'wcpoa_expired_date', true );
 wp_nonce_field( plugin_basename( __FILE__ ), 'wcpoa_attachment_nonce' );
+// Upgrade to pro popup
+if ( !(wpap_fs()->is__premium_only() && wpap_fs()->can_use_premium_code()) ) {
+    require_once WCPOA_PLUGIN_PATH . 'admin/partials/dots-upgrade-popup.php';
+}
 ?>
 <div class="wcpoa-field wcpoa-single-prod-attach wcpoa-field-repeater" data-name="attachments" data-type="repeater"
     data-key="attachments">
     <div class="wcpoa-label">
         <span><?php 
-esc_html_e( 'With these options, Assign attachment to products and categories. ', 'woocommerce-product-attachment' );
+esc_html_e( 'Easily manage and create multiple attachments for this product. ', 'woocommerce-product-attachment' );
 ?></span><br>
-        <ul class="wcpoa-top-desc">
-            <li><?php 
-esc_html_e( 'It will downloadable/viewable in the Order details and/or Product pages.', 'woocommerce-product-attachment' );
-?>
-            </li>
-            <li><?php 
-esc_html_e( 'Each attachment can be visible for different order statuses. ', 'woocommerce-product-attachment' );
-?>
-            </li>
-            <li><?php 
-esc_html_e( 'Attachments assign to parent category with subcategories (parent category is higher precedence)', 'woocommerce-product-attachment' );
-?>
-            </li>
-        </ul>
     </div>
 
     <div class="wcpoa-input">
@@ -152,27 +142,24 @@ esc_html_e( 'Expire', 'woocommerce-product-attachment' );
                         </th>
                     </tr>
                     <?php 
-if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
+if ( !empty( $wcpoa_attachment_ids ) && is_array( $wcpoa_attachment_ids ) ) {
     foreach ( $wcpoa_attachment_ids as $key => $wcpoa_attachments_id ) {
-        
-        if ( !empty($wcpoa_attachments_id) ) {
-            $attachment_name = ( isset( $wcpoa_attachment_name[$key] ) && !empty($wcpoa_attachment_name[$key]) ? $wcpoa_attachment_name[$key] : '' );
-            $wcpoa_attachment_file_id = ( isset( $wcpoa_attachment_url[$key] ) && !empty($wcpoa_attachment_url[$key]) ? $wcpoa_attachment_url[$key] : '' );
-            $wcpoa_attach_type_single = ( isset( $wcpoa_attach_type[$key] ) && !empty($wcpoa_attach_type[$key]) ? $wcpoa_attach_type[$key] : 'file_upload' );
-            $wcpoa_attachment_description = ( isset( $wcpoa_attachment_descriptions[$key] ) && !empty($wcpoa_attachment_descriptions[$key]) ? $wcpoa_attachment_descriptions[$key] : '' );
-            $wcpoa_product_open_window_flag_val = ( isset( $wcpoa_product_open_window_flag[$key] ) && !empty($wcpoa_product_open_window_flag[$key]) ? $wcpoa_product_open_window_flag[$key] : '' );
-            $wcpoa_product_p_enable = ( isset( $wcpoa_product_page_enable[$key] ) && !empty($wcpoa_product_page_enable[$key]) ? $wcpoa_product_page_enable[$key] : '' );
-            $wcpoa_product_logged_in_flag_val = ( isset( $wcpoa_product_logged_in_flag[$key] ) && !empty($wcpoa_product_logged_in_flag[$key]) ? $wcpoa_product_logged_in_flag[$key] : '' );
-            $wcpoa_product_date_enable = ( isset( $wcpoa_pd_enable[$key] ) && !empty($wcpoa_pd_enable[$key]) ? $wcpoa_pd_enable[$key] : '' );
-            $wcpoa_expired_dates = ( isset( $wcpoa_expired_date[$key] ) && !empty($wcpoa_expired_date[$key]) ? $wcpoa_expired_date[$key] : '' );
+        if ( !empty( $wcpoa_attachments_id ) ) {
+            $attachment_name = ( isset( $wcpoa_attachment_name[$key] ) && !empty( $wcpoa_attachment_name[$key] ) ? $wcpoa_attachment_name[$key] : '' );
+            $wcpoa_attachment_file_id = ( isset( $wcpoa_attachment_url[$key] ) && !empty( $wcpoa_attachment_url[$key] ) ? $wcpoa_attachment_url[$key] : '' );
+            $wcpoa_attach_type_single = ( isset( $wcpoa_attach_type[$key] ) && !empty( $wcpoa_attach_type[$key] ) ? $wcpoa_attach_type[$key] : 'file_upload' );
+            $wcpoa_attachment_description = ( isset( $wcpoa_attachment_descriptions[$key] ) && !empty( $wcpoa_attachment_descriptions[$key] ) ? $wcpoa_attachment_descriptions[$key] : '' );
+            $wcpoa_product_open_window_flag_val = ( isset( $wcpoa_product_open_window_flag[$key] ) && !empty( $wcpoa_product_open_window_flag[$key] ) ? $wcpoa_product_open_window_flag[$key] : '' );
+            $wcpoa_product_p_enable = ( isset( $wcpoa_product_page_enable[$key] ) && !empty( $wcpoa_product_page_enable[$key] ) ? $wcpoa_product_page_enable[$key] : '' );
+            $wcpoa_product_logged_in_flag_val = ( isset( $wcpoa_product_logged_in_flag[$key] ) && !empty( $wcpoa_product_logged_in_flag[$key] ) ? $wcpoa_product_logged_in_flag[$key] : '' );
+            $wcpoa_product_date_enable = ( isset( $wcpoa_pd_enable[$key] ) && !empty( $wcpoa_pd_enable[$key] ) ? $wcpoa_pd_enable[$key] : '' );
+            $wcpoa_expired_dates = ( isset( $wcpoa_expired_date[$key] ) && !empty( $wcpoa_expired_date[$key] ) ? $wcpoa_expired_date[$key] : '' );
             $wcpoa_order_status_value = get_post_meta( $product_id, 'wcpoa_order_status', true );
-            
             if ( $wcpoa_order_status_value === 'wc-all' ) {
                 $wcpoa_order_status = array();
             } else {
-                $wcpoa_order_status = ( isset( $wcpoa_order_status_value[$wcpoa_attachments_id] ) && !empty($wcpoa_order_status_value[$wcpoa_attachments_id]) ? $wcpoa_order_status_value[$wcpoa_attachments_id] : array() );
+                $wcpoa_order_status = ( isset( $wcpoa_order_status_value[$wcpoa_attachments_id] ) && !empty( $wcpoa_order_status_value[$wcpoa_attachments_id] ) ? $wcpoa_order_status_value[$wcpoa_attachments_id] : array() );
             }
-            
             //file upload
             // vars
             $uploader = 'uploader';
@@ -189,10 +176,8 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                 'data-uploader' => $uploader,
             );
             // has value?
-            
-            if ( !empty($wcpoa_attachment_file_id) ) {
+            if ( !empty( $wcpoa_attachment_file_id ) ) {
                 $file = get_post( $wcpoa_attachment_file_id );
-                
                 if ( $file ) {
                     $o['icon'] = wp_mime_type_icon( $wcpoa_attachment_file_id );
                     $o['title'] = $file->post_title;
@@ -201,30 +186,28 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                     $explode = explode( '/', $o['url'] );
                     $o['filename'] = end( $explode );
                 }
-                
                 // url exists
                 if ( $o['url'] ) {
                     $filediv['class'] .= ' has-value';
                 }
             }
-            
             ?>
                                 <tr class="wcpoa-row wcpoa-has-value -collapsed"
                                     data-id="<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?>"
                                     id="<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?>">
 
                                     <?php 
-            echo  wp_kses( $before_fields, $this->allowed_html_tags() ) ;
+            echo wp_kses( $before_fields, $this->allowed_html_tags() );
             ?>
                                     <div class="wcpoa-field -collapsed-target group-title" data-name="_name" data-type="text"
                                         data-key="">
                                         <div class="wcpoa-label order">
                                             <span class="attchment_order"><?php 
-            echo  intval( $i ) + 1 ;
+            echo intval( $i ) + 1;
             $i++;
             ?></span>
                                         </div>
@@ -249,13 +232,11 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                         </div>
                                         <div class="wcpoa-label not-mobile">
                                             <?php 
-            
             if ( $wcpoa_attach_type_single === "file_upload" ) {
                 $path_parts = pathinfo( $o['url'] );
                 $ext = strtolower( $path_parts["extension"] );
                 $file_upload_text = 'File Upload ( .' . $ext . ' )';
             }
-            
             ?>
                                             <label
                                                 for="attchment_type"><?php 
@@ -265,20 +246,17 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                         <div class="wcpoa-label not-mobile">
                                             <label for="attchment_visibility">
                                                 <?php 
-            
             if ( "yes" === $wcpoa_product_p_enable ) {
                 esc_html_e( 'Yes', 'woocommerce-product-attachment' );
             } else {
                 esc_html_e( 'No', 'woocommerce-product-attachment' );
             }
-            
             ?>
                                             </label>
                                         </div>
                                         <div class="wcpoa-label not-mobile">
                                             <label for="attchment_expire">
                                                 <?php 
-            
             if ( "no" === $wcpoa_product_date_enable ) {
                 esc_html_e( 'No', 'woocommerce-product-attachment' );
             } elseif ( "yes" === $wcpoa_product_date_enable ) {
@@ -286,7 +264,6 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
             } elseif ( "time_amount" === $wcpoa_product_date_enable ) {
                 esc_html_e( 'Specific Time', 'woocommerce-product-attachment' );
             }
-            
             ?>
                                             </label>
                                         </div>
@@ -301,7 +278,7 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                             <div class="wcpoa-input-wrap">
                                                 <input readonly="" class="wcpoa_attachments_id" name="wcpoa_attachments_id[]"
                                                     value="<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?>" placeholder=""
                                                     type="text">
                                                 <span class="wcpoa-description-tooltip-icon"></span>
@@ -325,7 +302,7 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                             <input class="wcpoa-attachment-name" type="text" name="wcpoa_attachment_name[]" placeholder="<?php 
             esc_attr_e( 'Attachment', 'woocommerce-product-attachment' );
             ?>" value="<?php 
-            echo  esc_attr( $attachment_name ) ;
+            echo esc_attr( $attachment_name );
             ?>">
                                             <span class="wcpoa-description-tooltip-icon"></span>
                                             <p class="wcpoa-description">
@@ -347,7 +324,7 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                             <textarea class="" name="wcpoa_attachment_description[]" placeholder="<?php 
             esc_attr_e( 'Enter a description', 'woocommerce-product-attachment' );
             ?>" rows="8"><?php 
-            echo  esc_html( $wcpoa_attachment_description ) ;
+            echo esc_html( $wcpoa_attachment_description );
             ?></textarea>
                                             <span class="wcpoa-description-tooltip-icon"></span>
                                             <p class="wcpoa-description">
@@ -372,15 +349,15 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                                         data-key="">
                                                         <option name="file_upload"
                                                             <?php 
-            echo  ( $wcpoa_attach_type_single === "file_upload" ? 'selected' : '' ) ;
+            echo ( $wcpoa_attach_type_single === "file_upload" ? 'selected' : '' );
             ?>
                                                             value="file_upload"><?php 
             esc_html_e( 'File Upload', 'woocommerce-product-attachment' );
             ?>
                                                         </option>
-                                                        <option name="" value="" class="wcpoa_pro_class" disabled>
+                                                        <option value="external_ulr" class="wcpoa_pro_class">
                                                             <?php 
-            esc_html_e( 'External URL ( Pro Version )', 'woocommerce-product-attachment' );
+            esc_html_e( 'External URL 🔒', 'woocommerce-product-attachment' );
             ?></option>
                                                     </select>
                                             <?php 
@@ -397,7 +374,7 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
             $is_show = "";
             ?>
                                     <div style="display:<?php 
-            echo  esc_attr( $is_show ) ;
+            echo esc_attr( $is_show );
             ?>"
                                         class="wcpoa-field file_upload wcpoa-field-file required" data-name="file" data-type="file"
                                         data-key="" data-required="1">
@@ -412,31 +389,31 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                             </div>
                                         </div>
                                         <div class="wcpoa-input" data-id="<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?>">
                                             <div <?php 
             $this->wcpoa_esc_attr_e( $filediv );
             ?>>
                                                 <div class="wcpoa-error-message">
                                                     <p><?php 
-            echo  'File value is required' ;
+            echo 'File value is required';
             ?></p>
                                                     <input name="wcpoa_attachment_file[]" data-validation="[NOTEMPTY]"
                                                         value="<?php 
-            echo  esc_attr( $wcpoa_attachment_file_id ) ;
+            echo esc_attr( $wcpoa_attachment_file_id );
             ?>" data-name="id"
                                                         type="hidden" required="required">
                                                 </div>
                                                 <div class="show-if-value file-wrap wcpoa-soh">
                                                     <div class="file-icon">
                                                         <img data-name="icon" src="<?php 
-            echo  esc_url( $o['icon'] ) ;
+            echo esc_url( $o['icon'] );
             ?>" alt="" />
                                                     </div>
                                                     <div class="file-info">
                                                         <p>
                                                             <strong data-name="title"><?php 
-            echo  esc_html( $o['title'] ) ;
+            echo esc_html( $o['title'] );
             ?></strong>
                                                         </p>
                                                         <p>
@@ -445,10 +422,10 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
             ?>
                                                                 :</strong>
                                                             <a data-name="filename" href="<?php 
-            echo  esc_url( $o['url'] ) ;
+            echo esc_url( $o['url'] );
             ?>"
                                                                 target="_blank"><?php 
-            echo  esc_html( $o['filename'] ) ;
+            echo esc_html( $o['filename'] );
             ?></a>
                                                         </p>
                                                         <p>
@@ -458,26 +435,24 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                                                 :</strong>
                                                             <span
                                                                 data-name="filesize"><?php 
-            echo  esc_html( $o['filesize'] ) ;
+            echo esc_html( $o['filesize'] );
             ?></span>
                                                         </p>
 
                                                         <ul class="wcpoa-hl wcpoa-soh-target">
                                                             <?php 
-            
             if ( $uploader !== 'basic' ) {
                 ?>
                                                             <li><a data-id="<?php 
-                echo  esc_attr( $wcpoa_attachments_id ) ;
+                echo esc_attr( $wcpoa_attachments_id );
                 ?>"
                                                                     class="wcpoa-icon -pencil dark" data-name="edit" href="#"></a>
                                                             </li>
                                                             <?php 
             }
-            
             ?>
                                                             <li><a data-id="<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?>"
                                                                     class="wcpoa-icon -cancel dark" data-name="remove" href="#"></a>
                                                             </li>
@@ -486,27 +461,24 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                                 </div>
                                                 <div class="hide-if-value">
                                                     <?php 
-            
             if ( $uploader === 'basic' ) {
                 ?>
                                                     <?php 
-                
                 if ( $field['value'] && !is_numeric( $field['value'] ) ) {
                     ?>
                                                     <div class="wcpoa-error-message">
                                                         <p><?php 
-                    echo  esc_html( $field['value'] ) ;
+                    echo esc_html( $field['value'] );
                     ?></p>
                                                     </div>
                                                     <?php 
                 }
-                
                 ?>
                                                     <input type="file" name="<?php 
-                echo  esc_attr( $field['name'] ) ;
+                echo esc_attr( $field['name'] );
                 ?>"
                                                         id="<?php 
-                echo  esc_attr( $field['id'] ) ;
+                echo esc_attr( $field['id'] );
                 ?>" />
                                                     <?php 
             } else {
@@ -516,12 +488,11 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                 esc_html_e( 'No file selected', 'woocommerce-product-attachment' );
                 ?>
                                                         <?php 
-                echo  wp_kses( $this->wcpoa_image_uploader_field( $wcpoa_attachments_id ), $this->allowed_html_tags() ) ;
+                echo wp_kses( $this->wcpoa_image_uploader_field( $wcpoa_attachments_id ), $this->allowed_html_tags() );
                 ?>
                                                     </p>
                                                     <?php 
             }
-            
             ?>
 
                                                 </div>
@@ -545,14 +516,14 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                             <select id="wcpoa_product_open_window_flag" name="wcpoa_product_open_window_flag[]">
                                                 <option name="no"
                                                     <?php 
-            echo  ( $wcpoa_product_open_window_flag_val === "no" ? 'selected' : '' ) ;
+            echo ( $wcpoa_product_open_window_flag_val === "no" ? 'selected' : '' );
             ?>
                                                     value="no"><?php 
             esc_html_e( 'No', 'woocommerce-product-attachment' );
             ?></option>
                                                 <option name="yes"
                                                     <?php 
-            echo  ( $wcpoa_product_open_window_flag_val === "yes" ? 'selected' : '' ) ;
+            echo ( $wcpoa_product_open_window_flag_val === "yes" ? 'selected' : '' );
             ?>
                                                     value="yes"><?php 
             esc_html_e( 'Yes', 'woocommerce-product-attachment' );
@@ -578,14 +549,14 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                             <select id="wcpoa_product_page_enable" name="wcpoa_product_page_enable[]">
                                                 <option name="yes"
                                                     <?php 
-            echo  ( $wcpoa_product_p_enable === "yes" ? 'selected' : '' ) ;
+            echo ( $wcpoa_product_p_enable === "yes" ? 'selected' : '' );
             ?>
                                                     value="yes"><?php 
             esc_html_e( 'Yes', 'woocommerce-product-attachment' );
             ?></option>
                                                 <option name="no"
                                                     <?php 
-            echo  ( $wcpoa_product_p_enable === "no" ? 'selected' : '' ) ;
+            echo ( $wcpoa_product_p_enable === "no" ? 'selected' : '' );
             ?> value="no">
                                                     <?php 
             esc_html_e( 'No', 'woocommerce-product-attachment' );
@@ -610,14 +581,14 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                             <select id="wcpoa_product_logged_in_flag" name="wcpoa_product_logged_in_flag[]">
                                                 <option name="no"
                                                     <?php 
-            echo  ( $wcpoa_product_logged_in_flag_val === "no" ? 'selected' : '' ) ;
+            echo ( $wcpoa_product_logged_in_flag_val === "no" ? 'selected' : '' );
             ?>
                                                     value="no"><?php 
             esc_html_e( 'No', 'woocommerce-product-attachment' );
             ?></option>
                                                 <option name="yes"
                                                     <?php 
-            echo  ( $wcpoa_product_logged_in_flag_val === "yes" ? 'selected' : '' ) ;
+            echo ( $wcpoa_product_logged_in_flag_val === "yes" ? 'selected' : '' );
             ?>
                                                     value="yes"><?php 
             esc_html_e( 'Yes', 'woocommerce-product-attachment' );
@@ -649,10 +620,10 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                             <ul class="wcpoa-checkbox-list">
                                                 <li>
                                                     <input name="wcpoa_order_status[<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?>][]" id="wcpoa_wc_order_completed" value="wcpoa-wc-completed" type="checkbox" <?php 
             if ( !is_null( $wcpoa_order_status ) && in_array( 'wcpoa-wc-completed', $wcpoa_order_status, true ) ) {
-                echo  'checked="checked"' ;
+                echo 'checked="checked"';
             }
             ?>>
                                                     <label for="wcpoa_wc_order_completed"><?php 
@@ -661,10 +632,10 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                                 </li>
                                                 <li>
                                                     <input name="wcpoa_order_status[<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?>][]" id="wcpoa_wc_order_on_hold" value="wcpoa-wc-on-hold" type="checkbox" <?php 
             if ( !is_null( $wcpoa_order_status ) && in_array( 'wcpoa-wc-on-hold', $wcpoa_order_status, true ) ) {
-                echo  'checked="checked"' ;
+                echo 'checked="checked"';
             }
             ?>>
                                                     <label for="wcpoa_wc_order_on_hold"><?php 
@@ -673,10 +644,10 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                                 </li>
                                                 <li>
                                                     <input name="wcpoa_order_status[<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?>][]" id="wcpoa_wc_order_pending" value="wcpoa-wc-pending" type="checkbox" <?php 
             if ( !is_null( $wcpoa_order_status ) && in_array( 'wcpoa-wc-pending', $wcpoa_order_status, true ) ) {
-                echo  'checked="checked"' ;
+                echo 'checked="checked"';
             }
             ?>>
                                                     <label for="wcpoa_wc_order_pending"><?php 
@@ -685,10 +656,10 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                                 </li>
                                                 <li>
                                                     <input name="wcpoa_order_status[<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?>][]" id="wcpoa_wc_order_processing" value="wcpoa-wc-processing" type="checkbox" <?php 
             if ( !is_null( $wcpoa_order_status ) && in_array( 'wcpoa-wc-processing', $wcpoa_order_status, true ) ) {
-                echo  'checked="checked"' ;
+                echo 'checked="checked"';
             }
             ?>>
                                                     <label for="wcpoa_wc_order_processing"><?php 
@@ -697,10 +668,10 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                                 </li>
                                                 <li>
                                                     <input name="wcpoa_order_status[<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?>][]" id="wcpoa_wc_order_cancelled" value="wcpoa-wc-cancelled" type="checkbox" <?php 
             if ( !is_null( $wcpoa_order_status ) && in_array( 'wcpoa-wc-cancelled', $wcpoa_order_status, true ) ) {
-                echo  'checked="checked"' ;
+                echo 'checked="checked"';
             }
             ?>>
                                                     <label for="wcpoa_wc_order_cancelled"><?php 
@@ -709,10 +680,10 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                                 </li>
                                                 <li>
                                                     <input name="wcpoa_order_status[<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?>][]" id="wcpoa_wc_order_failed" value="wcpoa-wc-failed" type="checkbox" <?php 
             if ( !is_null( $wcpoa_order_status ) && in_array( 'wcpoa-wc-failed', $wcpoa_order_status, true ) ) {
-                echo  'checked="checked"' ;
+                echo 'checked="checked"';
             }
             ?>>
                                                     <label for="wcpoa_wc_order_failed"><?php 
@@ -721,10 +692,10 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                                 </li>
                                                 <li>
                                                     <input name="wcpoa_order_status[<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?>][]" id="wcpoa_wc_order_refunded" value="wcpoa-wc-refunded" type="checkbox" <?php 
             if ( !is_null( $wcpoa_order_status ) && in_array( 'wcpoa-wc-refunded', $wcpoa_order_status, true ) ) {
-                echo  'checked="checked"' ;
+                echo 'checked="checked"';
             }
             ?>>
                                                     <label for="wcpoa_wc_order_refunded"><?php 
@@ -744,27 +715,27 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                         </div>
                                         <div class="wcpoa-input enable_expire_date">
                                             <select name="wcpoa_expired_date_enable[]" class="enable_date_time" data-type="enable_date_<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?>" data-key="">
                                                 <option name="no"
                                                     <?php 
-            echo  ( $wcpoa_product_date_enable === "no" ? 'selected' : '' ) ;
+            echo ( $wcpoa_product_date_enable === "no" ? 'selected' : '' );
             ?>
                                                     value="no" class=""><?php 
             esc_html_e( 'No', 'woocommerce-product-attachment' );
             ?></option>
                                                 <option name="yes"
                                                     <?php 
-            echo  ( $wcpoa_product_date_enable === "yes" ? 'selected' : '' ) ;
+            echo ( $wcpoa_product_date_enable === "yes" ? 'selected' : '' );
             ?>
                                                     value="yes"><?php 
             esc_html_e( 'Specific Date', 'woocommerce-product-attachment' );
             ?></option>
                                                 <?php 
             ?>
-                                                        <option name="" value="" class="wcpoa_pro_class" disabled>
+                                                        <option value="time_amount" class="wcpoa_pro_class">
                                                             <?php 
-            esc_html_e( 'Selected time period after purchase ( Pro Version )', 'woocommerce-product-attachment' );
+            esc_html_e( 'Selected time period after purchase 🔒', 'woocommerce-product-attachment' );
             ?>
                                                         </option>
                                                 <?php 
@@ -782,10 +753,10 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
             $is_date = ( $wcpoa_product_date_enable !== 'yes' ? 'none' : '' );
             ?>
                                     <div style="display:<?php 
-            echo  esc_attr( $is_date ) ;
+            echo esc_attr( $is_date );
             ?>"
                                         class="wcpoa-field enable_date enable_date_<?php 
-            echo  esc_attr( $wcpoa_attachments_id ) ;
+            echo esc_attr( $wcpoa_attachments_id );
             ?> wcpoa-field-date-picker"
                                         data-name="date" data-type="date_picker" data-key="" data-required="1" style=''>
                                         <div class="wcpoa-label">
@@ -797,10 +768,10 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                         <div class="wcpoa-input">
                                             <div class="wcpoa-date-picker wcpoa-input-wrap" data-date_format="yy/mm/dd">
                                                 <input class="input wcpoa-php-date-picker" autocomplete="off" name="wcpoa_expired_date[]" placeholder="<?php 
-            echo  esc_attr( 'yy/mm/dd' ) ;
+            echo esc_attr( 'yy/mm/dd' );
             ?>" value="<?php 
             if ( $wcpoa_product_date_enable === "yes" ) {
-                echo  esc_attr( $wcpoa_expired_dates ) ;
+                echo esc_attr( $wcpoa_expired_dates );
             }
             ?>"
                                                     type="text">
@@ -814,12 +785,11 @@ if ( !empty($wcpoa_attachment_ids) && is_array( $wcpoa_attachment_ids ) ) {
                                         </div>
                                     </div>
                                     <?php 
-            echo  wp_kses( $after_fields, $this->allowed_html_tags() ) ;
+            echo wp_kses( $after_fields, $this->allowed_html_tags() );
             ?>
                                 </tr>
                                 <?php 
         }
-    
     }
 }
 foreach ( $field['value'] as $i => $row ) {
@@ -830,12 +800,12 @@ foreach ( $field['value'] as $i => $row ) {
     }
     ?>
                             <tr class="<?php 
-    echo  esc_attr( $row_class ) ;
+    echo esc_attr( $row_class );
     ?>" rowatt="<?php 
-    echo  esc_attr( $row_att ) ;
+    echo esc_attr( $row_att );
     ?>"
                                 data-id="<?php 
-    echo  esc_attr( $i ) ;
+    echo esc_attr( $i );
     ?>">
 
                                 <td class="wcpoa-fields -left">
@@ -843,7 +813,7 @@ foreach ( $field['value'] as $i => $row ) {
                                         data-key="">
                                         <div class="wcpoa-label order">
                                             <span class="attchment_order"><?php 
-    echo  intval( $i ) + 1 ;
+    echo intval( $i ) + 1;
     $i++;
     ?></span>
                                         </div>
@@ -958,9 +928,9 @@ foreach ( $field['value'] as $i => $row ) {
                                                             <?php 
     esc_html_e( 'File Upload', 'woocommerce-product-attachment' );
     ?></option>
-                                                        <option name="" value="" class="wcpoa_pro_class" disabled>
+                                                        <option value="external_ulr" class="wcpoa_pro_class">
                                                             <?php 
-    esc_html_e( 'External URL ( Pro Version )', 'woocommerce-product-attachment' );
+    esc_html_e( 'External URL 🔒', 'woocommerce-product-attachment' );
     ?>
                                                         </option>
                                                     </select>
@@ -998,7 +968,7 @@ foreach ( $field['value'] as $i => $row ) {
                                                     <div class="file-icon">
                                                         <img data-name="icon"
                                                             src="<?php 
-    echo  esc_url( $plugin_url ) . 'admin/images/default.png' ;
+    echo esc_url( $plugin_url ) . 'admin/images/default.png';
     ?>"
                                                             alt="" title="">
                                                     </div>
@@ -1033,7 +1003,7 @@ foreach ( $field['value'] as $i => $row ) {
     esc_html_e( 'No file selected ', 'woocommerce-product-attachment' );
     ?>
                                                         <?php 
-    echo  wp_kses( $this->wcpoa_image_uploader_field( 'test' ), $this->allowed_html_tags() ) ;
+    echo wp_kses( $this->wcpoa_image_uploader_field( 'test' ), $this->allowed_html_tags() );
     ?>
                                                     </p>
                                                 </div>
@@ -1207,9 +1177,9 @@ foreach ( $field['value'] as $i => $row ) {
     ?></option>
                                                 <?php 
     ?>
-                                                        <option name="" value="" class="wcpoa_pro_class" disabled>
+                                                        <option value="time_amount" class="wcpoa_pro_class">
                                                             <?php 
-    esc_html_e( 'Selected time period after purchase ( Pro Version )', 'woocommerce-product-attachment' );
+    esc_html_e( 'Selected time period after purchase 🔒', 'woocommerce-product-attachment' );
     ?>
                                                         </option>
                                                 <?php 
@@ -1233,7 +1203,7 @@ foreach ( $field['value'] as $i => $row ) {
                                         <div class="wcpoa-input">
                                             <div class="wcpoa-input-wrap" data-date_format="yy/mm/dd">
                                                 <input class="wcpoa-php-date-picker" value="" name="wcpoa_expired_date[]" placeholder="<?php 
-    echo  esc_attr( 'yy/mm/dd' ) ;
+    echo esc_attr( 'yy/mm/dd' );
     ?>" type="text" autocomplete="off">
                                                 <span class="wcpoa-description-tooltip-icon"></span>
                                                 <p class="wcpoa-description">
@@ -1254,7 +1224,6 @@ foreach ( $field['value'] as $i => $row ) {
                 </tbody>
             </table>
             <?php 
-
 if ( $show_add ) {
     ?>
             <ul class="wcpoa-actions wcpoa-hl">
@@ -1267,12 +1236,10 @@ if ( $show_add ) {
             </ul>
             <?php 
 }
-
 ?>
             <div class="product_attachment_help">
-                <span class="dashicons dashicons-info-outline"></span>
                 <a href="<?php 
-echo  esc_url( 'https://docs.thedotstore.com/article/378-bulk-attachment-for-woocommerce' ) ;
+echo esc_url( 'https://docs.thedotstore.com/article/378-bulk-attachment-for-woocommerce' );
 ?>"
                     target="_blank"><?php 
 esc_html_e( 'View Documentation', 'woocommerce-product-attachment' );

@@ -26,7 +26,6 @@ if ( $cross_sells ) : ?>
 #accessorieslist .products .product-wrapper {
     grid-template-columns: minmax(100%, 302px) minmax(0, 1fr);
 	border:0px!important;
-	border-bottom:1px solid #ddd!important;
 	-webkit-border-radius: 0px!important;
 -moz-border-radius: 0px!important;
 border-radius: 0px!important;

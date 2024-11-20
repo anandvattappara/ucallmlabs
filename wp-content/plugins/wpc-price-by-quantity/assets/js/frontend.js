@@ -137,7 +137,9 @@
     }
 
     if ($table.length) {
-      wpcpq_init_table($table, 'quantity');
+      $table.each(function() {
+        wpcpq_init_table($(this), 'quantity');
+      });
     }
   });
 })(jQuery);
@@ -156,7 +158,7 @@ function wpcpq_init_table($table, context) {
       price = $table.attr('data-price'), method = $table.attr('data-method'),
       step = parseFloat($table.attr('data-step')),
       items = $table.find('.wpcpq-item').get(),
-      $main_price = jQuery('.wpcpq-price-' + id),
+      $main_price = jQuery('.wpcpq-price-' + wid),
       $qty = jQuery('.wpcpq-id-' + id).
           closest('form.cart').
           find('[name=quantity]');

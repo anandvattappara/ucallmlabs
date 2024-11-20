@@ -1539,17 +1539,42 @@ function ecomall_add_product_custom_tab( $tabs = array() ){
 }
 
 function ecomall_product_dimensions_content( $name, $tab ){
+
 	echo '<h2>' . esc_html__('Specifications', 'ecomall') . '</h2>';
 	echo '<div class="ts-dimensions-content">';
-		echo '<ul>';
+	  $i = 0 ;
+	  $tableprinted = false;
 		foreach( $tab['dimensions'] as $row ){
-			echo '<li>';
-			foreach( $row as $col ){
-				echo '<span>' . esc_html($col) . '</span>';
+			
+			if(trim($row[0])=='Group Heading'){
+				if($i==0){
+					echo '<h3 class="specsubhead">'.$row[1].'</h3><table class="table table-striped table-bordered spectable">';	
+				}
+				else{
+					echo '</table>';
+					echo '<h3 class="specsubhead">'.$row[1].'</h3><table class="table table-striped table-bordered spectable">';	
+				}
+				 $tableprinted = true;
+				
 			}
-			echo '</li>';
+			else{
+			 if( $tableprinted == false){
+			 	echo '<table class="table table-striped table-bordered spectable">';	
+				 $tableprinted = true;
+			 }
+				echo '<tr>';
+				$j=0;
+				foreach( $row as $col ){
+					if($j%2 == 0) $width='width="25%"';
+					echo '<td '.$width.'>' . esc_html($col) . '</td>';
+					$j++; 
+					 $width ="";
+				}
+				echo '</tr>';
+			}
+			$i++;
 		}
-		echo '</ul>';
+		echo '</table>';
 	echo '</div>';
 }
 

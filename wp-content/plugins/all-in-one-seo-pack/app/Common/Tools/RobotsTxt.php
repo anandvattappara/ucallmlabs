@@ -211,7 +211,7 @@ class RobotsTxt {
 	 */
 	private function getSitemapRules() {
 		$defaultSitemaps = $this->extractSitemapUrls( aioseo()->robotsTxt->getDefaultRobotsTxtContent() );
-		$sitemapRules    = aioseo()->sitemap->helpers->getSitemapUrls();
+		$sitemapRules    = aioseo()->sitemap->helpers->getSitemapUrlsPrefixed();
 
 		return array_diff( $sitemapRules, $defaultSitemaps );
 	}
@@ -285,7 +285,7 @@ class RobotsTxt {
 				}
 
 				$userAgent           = $value;
-				$rules[ $userAgent ] = [];
+				$rules[ $userAgent ] = ! empty( $rules[ $userAgent ] ) ? $rules[ $userAgent ] : [];
 			} else {
 				$rules[ $userAgent ][] = "$directive: $value";
 				if ( $siblingsUserAgents ) {

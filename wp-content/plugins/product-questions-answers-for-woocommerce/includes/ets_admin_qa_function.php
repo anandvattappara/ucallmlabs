@@ -46,7 +46,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	 * Add new Theam option in the admin Panel
 	 */ 
 	public function admin_menu_product_qa(){
-		add_menu_page(__('Products Q & A','ets_q_n_a'), __('Products Q & A','ets_q_n_a'), 'manage_options', 'theme-options', array($this, 'etsLoadMoreQa'), 'dashicons-info ',59);
+		add_menu_page(__('Products Q & A','product-questions-answers-for-woocommerce'), __('Products Q & A','product-questions-answers-for-woocommerce'), 'manage_options', 'theme-options', array($this, 'etsLoadMoreQa'), 'dashicons-info ',59);
 	}
 
 
@@ -55,7 +55,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 	 */
 	public function etsErrorNotification() { 
 		$class = 'notice notice-error';
-		$message = __( 'Access not allowed', 'ets_q_n_a' ).'.';
+		$message = __( 'Access not allowed', 'product-questions-answers-for-woocommerce' ).'.';
 
 		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) ); 
 	} 
@@ -69,7 +69,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		if(empty($loadButton)){  	
 			update_option( 'ets_load_more_button','true' );
 			update_option( 'ets_product_q_qa_list_length', '10' );
-			update_option( 'ets_load_more_button_name', __("Load More",'ets_q_n_a') );
+			update_option( 'ets_load_more_button_name', __("Load More",'product-questions-answers-for-woocommerce') );
 			update_option( 'ets_product_qa_paging_type', "normal" );
 			$loadButton = get_option( 'ets_load_more_button' );
 
@@ -105,7 +105,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 						if(!empty($buttonName)){
 							update_option( 'ets_load_more_button_name', $buttonName );
 						} else {
-							$buttonName = __("Load More",'ets_q_n_a');
+							$buttonName = __("Load More",'product-questions-answers-for-woocommerce');
 							update_option( 'ets_load_more_button_name', $buttonName );
 						} 
 					} else {
@@ -113,7 +113,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 						update_option( 'ets_product_q_qa_list_length', $lengthOfList );
 					}
 				} else {
-					$buttonName = __("Load More",'ets_q_n_a');		
+					$buttonName = __("Load More",'product-questions-answers-for-woocommerce');		
 					update_option( 'ets_load_more_button', $loadButton );
 					update_option( 'ets_product_q_qa_list_length', $lengthOfList );
 					update_option( 'ets_load_more_button_name', $buttonName );
@@ -127,39 +127,39 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		
 		
 		?><div class="wrap"><div id="icon-options-general" class="icon32"><br></div>
-		<h2><?php echo __("Product Q & A Setting",'ets_q_n_a'); ?></h2></div>
+		<h2><?php echo __("Product Q & A Setting",'product-questions-answers-for-woocommerce'); ?></h2></div>
 		<form method="post" name="load_more_form" action="#"> 
 			 	
 			<table>
 				<tr>
-					<td><h4><?php echo __('Load More','ets_q_n_a'); ?>: </h4></td>
+					<td><h4><?php echo __('Load More','product-questions-answers-for-woocommerce'); ?>: </h4></td>
 					<td> 
 						 <?php wp_nonce_field( 'etsLoadMoreQa', 'ets_load_more_button' ); ?>
 						<input type="checkbox" <?php if(($loadButton == 1)) { echo $loadButton; ?> checked <?php }?> name="ets_load_more_active" value="1" >
 					</td> 	
 				</tr> 
 				<tr>
-					<td><h4><?php echo __('Page Size','ets_q_n_a'); ?>: </h4></td>
+					<td><h4><?php echo __('Page Size','product-questions-answers-for-woocommerce'); ?>: </h4></td>
 					<td><input type="number" name="ets_length_of_list" value="<?php echo isset($lengthOfList) ? $lengthOfList : '';?>"  min="1"  ></td>
 				</tr> 
 				<tr>
-					<td><h4><?php echo __('Paging Button Name','ets_q_n_a'); ?>: </h4></td>
+					<td><h4><?php echo __('Paging Button Name','product-questions-answers-for-woocommerce'); ?>: </h4></td>
 					<td><input type="text" name="ets_load_more_button_name" value="<?php echo isset($buttonName) ? $buttonName : '';?>" width="50px" height="90px"></td>
 				</tr>
 				<tr>
-					<td><h4><?php echo __('Layout','ets_q_n_a'); ?>: </h4></td>
+					<td><h4><?php echo __('Layout','product-questions-answers-for-woocommerce'); ?>: </h4></td>
 					<td><select name="paging_type">
-					    	<option value="normal" <?php if($pagingType == "normal") { ?> selected <?php }?>><?php echo __('Normal','ets_q_n_a');?></option>
-					    	<option value="accordion"  <?php if($pagingType == "accordion") { ?> selected <?php }?>><?php echo __('Accordion','ets_q_n_a');?></option>
+					    	<option value="normal" <?php if($pagingType == "normal") { ?> selected <?php }?>><?php echo __('Normal','product-questions-answers-for-woocommerce');?></option>
+					    	<option value="accordion"  <?php if($pagingType == "accordion") { ?> selected <?php }?>><?php echo __('Accordion','product-questions-answers-for-woocommerce');?></option>
 						</select>
 					</td>
 				</tr>
 				<tr>
-					<td><h4><?php echo __('Auto Approve','ets_q_n_a'); ?>: </h4></td>
+					<td><h4><?php echo __('Auto Approve','product-questions-answers-for-woocommerce'); ?>: </h4></td>
 					<td><input type="checkbox" name="ets_qa_approve" value="yes" <?php if(isset($aprValue) && $aprValue == 'yes'){ echo "checked"; } else { '' ; }?>></td>
 				</tr> 
 				<tr><td></td>
-					<td><button type="submit" name="ets_load_more" class="button button-primary button-large"><?php echo __('Submit',"ets_q_n_a"); ?></button>
+					<td><button type="submit" name="ets_load_more" class="button button-primary button-large"><?php echo __('Submit',"product-questions-answers-for-woocommerce"); ?></button>
 				</tr>
 			</table>
 		</form> 
@@ -173,7 +173,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
  	public function product_tab_admin_qa( $tabs ){
  
 		$tabs['admin_answer'] = array(
-			'label'    		=> __('Q & A','ets_q_n_a'),
+			'label'    		=> __('Q & A','product-questions-answers-for-woocommerce'),
 			'target'   		=> 'ets_product_data', 
 			'priority' 		=> 100,  
 			'id'			=> 'ets_question',
@@ -264,7 +264,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								'id'    	  =>  "ets_question[$key]",  
 								'name'		  =>  "ets_question[$key]",
 								'value'       =>  $value['question'],
-								'label'       =>  __('Question','ets_q_n_a').': '  
+								'label'       =>  __('Question','product-questions-answers-for-woocommerce').': '  
 							) 
 						);
 
@@ -273,7 +273,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								'id'		   =>  "ets_answer[$key]",
 								'name'		   =>  "ets_answer[$key]",
 								'value'        =>  $value['answer'], 
-								'label'        =>  __('Answer','ets_q_n_a').': ' 
+								'label'        =>  __('Answer','product-questions-answers-for-woocommerce').': ' 
 							) 
 						);	
 
@@ -285,7 +285,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								'value'	=> ((isset($value['approve']) && $value['approve'] =='yes') || !isset($value['approve']) ) ? 'yes' :'no',
 								'cbvalue' => 'yes',
 								
-	 							'label'   =>  __('Approve','ets_q_n_a').': ',
+	 							'label'   =>  __('Approve','product-questions-answers-for-woocommerce').': ',
 							)
 						);
 							
@@ -325,7 +325,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								array(  
 									'name'		  => 'ets_first_question',
 									'value'       => '',
-									'label'       => __('Question','ets_q_n_a').' : ',
+									'label'       => __('Question','product-questions-answers-for-woocommerce').' : ',
 									'desc_tip'    => true, 
 									'id'		  => 'ets_question_data'	 
 								) 
@@ -334,7 +334,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 								array( 
 									'name'		  => 'ets_first_answer',
 									'value'       =>  '',
-									'label'       => __('Answer','ets_q_n_a').' : ',
+									'label'       => __('Answer','product-questions-answers-for-woocommerce').' : ',
 									'desc_tip'    => true, 	
 									'id'		  => 'ets_answer_data' 
 								) 
@@ -351,7 +351,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		 		</ul> 
 		 		<input type="hidden" name="ets-new-question-Answer-count" id="ets-new-question-Answer-count" value=""> 
 				<a href="#" type="submit" name="ets-add-new-qa" class="ets-add-new-qa ">+<?php 
-					echo apply_filters('wc_add_new_qa_label', __('Add New',"ets_q_n_a"));
+					echo apply_filters('wc_add_new_qa_label', __('Add New',"product-questions-answers-for-woocommerce"));
 					?></a>
 
 				
@@ -495,7 +495,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				if ( $before_save && !empty(trim($value['answer'])) && !empty(trim($value['user_email'])) && (trim($value['answer']) != trim($before_save[$key]['answer']) && !empty( trim( $before_save[$key]['answer'] )  ) ) )
 				{
 
-			 		$subject =apply_filters("wc_qa_answer_updated_mail_subject" ,__("Answer to Your Question was Updated",'ets_q_n_a'). ': ' . get_bloginfo('name'));
+			 		$subject =apply_filters("wc_qa_answer_updated_mail_subject" ,__("Answer to Your Question was Updated",'product-questions-answers-for-woocommerce'). ': ' . get_bloginfo('name'));
 			 		$message = "Dear " . $userName . ",<br><br>";
 			 		$message .= "<a href='$site_url'>" . $site_name . "</a> updated an answer to your question on the product <a href='$url'> " . $productTitle ."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $answers ."</div>";
 
@@ -505,7 +505,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 				 
 				// First time answer    
 				} elseif ( $before_save && empty( trim( $before_save[$key]['answer'] ) ) && !empty( trim( $value['answer'] ) )  && !empty(trim($value['user_email'])) ) {  
-					$subject = __("Your Question was Answered",'ets_q_n_a'). ': ' . get_bloginfo('name');
+					$subject = __("Your Question was Answered",'product-questions-answers-for-woocommerce'). ': ' . get_bloginfo('name');
 			 		$subject = apply_filters("wc_qa_new_answer_mail_subject", $subject);
 			 		$message = "Dear " . $userName . ",<br><br>";
 			 		$message .= "<a href='$site_url'>" . $site_name . "</a> added an answer on the product <a href='$url'> " . $productTitle ."</a>:  <br><div style='background-color: #FFF8DC;border-left: 2px solid #ffeb8e;padding: 10px;margin-top:10px;'>". $answers ."</div>";
@@ -618,7 +618,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 		if( !wp_verify_nonce($_POST['addNewQaNonce'],'ets-product-add-new-qa')){
 			$response = array( 
 				'status'		=>  0,
-				'error'			=>  __("Access not allowed",'ets_q_n_a').'.'
+				'error'			=>  __("Access not allowed",'product-questions-answers-for-woocommerce').'.'
 			);
 			
 			echo json_encode($response);
@@ -634,7 +634,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			array(  
 				'name'		  =>    "ets_new_question[$count]",
 				'value'       =>    '',
-				'label'       =>     __('Question','ets_q_n_a').": ",
+				'label'       =>     __('Question','product-questions-answers-for-woocommerce').": ",
 				'desc_tip'    =>    true,  	 
 			) 
 		);
@@ -643,7 +643,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			array( 
 				'name'		  =>   "ets_new_answer[$count]",
 				'value'       =>    '', 
-				'label'       =>     __('Answer','ets_q_n_a').': ',
+				'label'       =>     __('Answer','product-questions-answers-for-woocommerce').': ',
 				'desc_tip'    =>     true,
 			) 
 		); 
@@ -652,7 +652,7 @@ class ETS_WOO_PRODUCT_ADMIN_QUESTION_ANSWER
 			array( 
 				'name'		        =>  "ets_admin_apv[$count]",
 				'class'				=>   "ets_admin_apv",		
-				'label'             =>   __('Approve','ets_q_n_a').': ' ,
+				'label'             =>   __('Approve','product-questions-answers-for-woocommerce').': ' ,
 				'value'	            => 'yes',
 				'cbvalue'           => 'yes',
 			)

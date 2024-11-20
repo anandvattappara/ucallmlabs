@@ -311,7 +311,7 @@ namespace AIOSEO\Plugin {
 			$this->sitemap            = $this->pro ? new Pro\Sitemap\Sitemap() : new Common\Sitemap\Sitemap();
 			$this->htmlSitemap        = new Common\Sitemap\Html\Sitemap();
 			$this->templates          = $this->pro ? new Pro\Utils\Templates() : new Common\Utils\Templates();
-			$this->categoryBase       = $this->pro ? new Pro\Main\CategoryBase() : null;
+			$this->categoryBase       = new Common\Main\CategoryBase();
 			$this->postSettings       = $this->pro ? new Pro\Admin\PostSettings() : new Lite\Admin\PostSettings();
 			$this->standalone         = new Common\Standalone\Standalone();
 			$this->searchStatistics   = $this->pro ? new Pro\SearchStatistics\SearchStatistics() : new Common\SearchStatistics\SearchStatistics();
@@ -322,6 +322,8 @@ namespace AIOSEO\Plugin {
 			$this->ai                 = $this->pro ? new Pro\Ai\Ai() : null;
 			$this->filters            = $this->pro ? new Pro\Main\Filters() : new Lite\Main\Filters();
 			$this->crawlCleanup       = new Common\QueryArgs\CrawlCleanup();
+			$this->emailReports       = new Common\EmailReports\EmailReports();
+			$this->writingAssistant   = new Common\WritingAssistant\WritingAssistant();
 
 			if ( ! wp_doing_ajax() && ! wp_doing_cron() ) {
 				$this->rss       = new Common\Rss();
@@ -334,28 +336,7 @@ namespace AIOSEO\Plugin {
 
 			$this->backwardsCompatibilityLoad();
 
-			if ( wp_doing_ajax() ) {
-				add_action( 'init', [ $this, 'loadAjaxInit' ], 999 );
-
-				return;
-			}
-
-			if ( wp_doing_cron() ) {
-				return;
-			}
-
 			add_action( 'init', [ $this, 'loadInit' ], 999 );
-		}
-
-		/**
-		 * Things that need to load after init, on AJAX requests.
-		 *
-		 * @since 4.2.4
-		 *
-		 * @return void
-		 */
-		public function loadAjaxInit() {
-			$this->addons->registerUpdateCheck();
 		}
 
 		/**
@@ -368,18 +349,11 @@ namespace AIOSEO\Plugin {
 		public function loadInit() {
 			$this->settings = new Common\Utils\VueSettings( '_aioseo_settings' );
 			$this->sitemap->init();
-			$this->sitemap->ping->init();
 
 			$this->badBotBlocker->init();
 
 			// We call this again to reset any post types/taxonomies that have not yet been set up.
 			$this->dynamicOptions->refresh();
-
-			if ( ! $this->pro ) {
-				return;
-			}
-
-			$this->addons->registerUpdateCheck();
 		}
 
 		/**

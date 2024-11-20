@@ -415,7 +415,8 @@ abstract class Base
                         if(isset(Woocommerce::$product_taxonomy_terms[$product_id]) && isset(Woocommerce::$product_taxonomy_terms[$product_id][$type])){
                             $term_ids = Woocommerce::$product_taxonomy_terms[$product_id][$type];
                         } else {
-                            $term_ids = Woocommerce::$product_taxonomy_terms[$product_id][$type] = wp_get_post_terms($product_id, $type, array("fields" => "ids"));
+                            $post_term = wp_get_post_terms($product_id, $type, array("fields" => "ids"));
+                            $term_ids = Woocommerce::$product_taxonomy_terms[$product_id][$type] = !is_wp_error($post_term) ? $post_term : [];
                         }
                         $not_in_list_product = count(array_intersect($term_ids, $comparision_value)) > 0;
                     }

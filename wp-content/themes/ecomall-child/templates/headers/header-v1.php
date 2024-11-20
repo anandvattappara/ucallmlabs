@@ -72,6 +72,10 @@ if( $ecomall_theme_options['ts_tablet_show_hotline'] ){
 						</div>
 						<?php endif; ?>
 						
+						<div class="shopping-cart-wrapper">
+							<?php echo ecomall_quote_basket_menu(); ?>
+						</div>
+						
 						<div class="icon-menu-sticky-header hidden-phone">
 							<span class="icon"></span>
 						</div>

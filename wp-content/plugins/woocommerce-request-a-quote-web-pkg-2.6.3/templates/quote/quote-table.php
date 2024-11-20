@@ -26,7 +26,7 @@ do_action( 'addify_before_quote_table' ); ?>
 	<table class="shop_table shop_table_responsive cart woocommerce-cart-form__contents  addify-quote-form__contents" cellspacing="0">
 		<thead>
 			<tr>
-				<th class="product-remove">&nbsp;</th>
+				
 				<th class="product-thumbnail">&nbsp;</th>
 				<th class="product-name"><?php esc_html_e( 'Product', 'addify_rfq' ); ?></th>
 				<?php if ( $price_display ) : ?>
@@ -42,6 +42,7 @@ do_action( 'addify_before_quote_table' ); ?>
 				<?php if ( $of_price_display ) : ?>
 					<th class="product-subtotal"><?php esc_html_e( 'Offered Subtotal', 'addify_rfq' ); ?></th>
 				<?php endif; ?>
+				<th class="product-remove">&nbsp;</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -65,25 +66,7 @@ do_action( 'addify_before_quote_table' ); ?>
 					?>
 					<tr class=" <?php echo esc_attr( apply_filters( 'addify_quote_item_class', 'cart_item', $quote_item, $quote_item_key ) ); ?>">
 
-						<td class="product-remove">
-							<?php
-								// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-								echo wp_kses_post(
-									apply_filters(
-										'addify_quote_item_remove_link',
-										sprintf(
-											'<a href="%s" class="remove remove-cart-item remove-quote-item" aria-label="%s" data-cart_item_key="%s" data-product_id="%s" data-product_sku="%s">&times;</a>',
-											esc_attr( $quote_item_key ),
-											esc_html__( 'Remove this item', 'addify_rfq' ),
-											esc_attr( $quote_item_key ),
-											esc_attr( $product_id ),
-											esc_attr( $_product->get_sku() )
-										),
-										$quote_item_key
-									)
-								);
-							?>
-						</td>
+						
 
 						<td class="product-thumbnail">
 						<?php
@@ -176,7 +159,25 @@ do_action( 'addify_before_quote_table' ); ?>
 								?>
 							</td>
 						<?php endif; ?>
-						
+						<td class="product-remove">
+							<?php
+								// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								echo wp_kses_post(
+									apply_filters(
+										'addify_quote_item_remove_link',
+										sprintf(
+											'<a href="%s" class="remove remove-cart-item remove-quote-item" aria-label="%s" data-cart_item_key="%s" data-product_id="%s" data-product_sku="%s">&times;</a>',
+											esc_attr( $quote_item_key ),
+											esc_html__( 'Remove this item', 'addify_rfq' ),
+											esc_attr( $quote_item_key ),
+											esc_attr( $product_id ),
+											esc_attr( $_product->get_sku() )
+										),
+										$quote_item_key
+									)
+								);
+							?>
+						</td>
 					</tr>
 					<?php
 				}

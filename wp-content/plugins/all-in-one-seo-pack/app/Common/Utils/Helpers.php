@@ -20,6 +20,7 @@ class Helpers {
 	use TraitHelpers\Deprecated;
 	use TraitHelpers\DateTime;
 	use TraitHelpers\Language;
+	use TraitHelpers\Numbers;
 	use TraitHelpers\PostType;
 	use TraitHelpers\Request;
 	use TraitHelpers\Shortcodes;
@@ -79,7 +80,7 @@ class Helpers {
 	 * @return boolean True if we are, false if not.
 	 */
 	public function isDev() {
-		return aioseo()->isDev || isset( $_REQUEST['aioseo-dev'] ); // phpcs:ignore HM.Security.NonceVerification.Recommended
+		return aioseo()->isDev || isset( $_REQUEST['aioseo-dev'] ); // phpcs:ignore HM.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Recommended
 	}
 
 	/**
@@ -188,7 +189,7 @@ class Helpers {
 	 * @since 4.0.0
 	 *
 	 * @param  integer $bytes The size of the file.
-	 * @return string         The size as a string.
+	 * @return array          The original and readable file size.
 	 */
 	public function convertFileSize( $bytes ) {
 		if ( empty( $bytes ) ) {
@@ -246,20 +247,18 @@ class Helpers {
 	 *
 	 * @since 4.1.0.2
 	 *
-	 * @param  string       $string The string.
-	 * @return string|array         The string or unserialized data.
+	 * @param  string        $string         The string.
+	 * @param  array|boolean $allowedClasses The allowed classes for unserialize.
+	 * @return string|array                  The string or unserialized data.
 	 */
-	public function maybeUnserialize( $string ) {
+	public function maybeUnserialize( $string, $allowedClasses = false ) {
 		if ( ! is_string( $string ) ) {
 			return $string;
 		}
 
 		$string = trim( $string );
-		if ( is_serialized( $string ) && ! $this->stringContains( $string, 'O:' ) ) {
-			// We want to add extra hardening for PHP versions greater than 5.6.
-			return version_compare( PHP_VERSION, '7.0', '<' )
-				? @unserialize( $string )
-				: @unserialize( $string, [ 'allowed_classes' => false ] ); // phpcs:disable PHPCompatibility.FunctionUse.NewFunctionParameters.unserialize_optionsFound
+		if ( is_serialized( $string ) ) {
+			return @unserialize( $string, [ 'allowed_classes' => $allowedClasses ] ); // phpcs:disable PHPCompatibility.FunctionUse.NewFunctionParameters.unserialize_optionsFound
 		}
 
 		return $string;
@@ -332,5 +331,61 @@ class Helpers {
 		}
 
 		return $version;
+	}
+
+	/**
+	 * Retrieves the marketing site articles.
+	 *
+	 * @since 4.7.2
+	 *
+	 * @param  bool  $fetchImage Whether to fetch the article image.
+	 * @return array             The articles or an empty array on failure.
+	 */
+	public function fetchAioseoArticles( $fetchImage = false ) {
+		$items = aioseo()->core->networkCache->get( 'rss_feed' );
+		if ( null !== $items ) {
+			return $items;
+		}
+
+		$options  = [
+			'timeout'   => 10,
+			'sslverify' => false,
+		];
+		$response = wp_remote_get( 'https://aioseo.com/wp-json/wp/v2/posts?per_page=4', $options );
+		$body     = wp_remote_retrieve_body( $response );
+		if ( ! $body ) {
+			return [];
+		}
+
+		$cached = [];
+		$items  = json_decode( $body, true );
+		foreach ( $items as $k => $item ) {
+			$cached[ $k ] = [
+				'url'     => $item['link'],
+				'title'   => $item['title']['rendered'],
+				'date'    => date( get_option( 'date_format' ), strtotime( $item['date'] ) ),
+				'content' => wp_html_excerpt( $item['content']['rendered'], 128, '&hellip;' ),
+			];
+
+			if ( $fetchImage ) {
+				$response = wp_remote_get( $item['_links']['wp:featuredmedia'][0]['href'] ?? '', $options );
+				$body     = wp_remote_retrieve_body( $response );
+				if ( ! $body ) {
+					continue;
+				}
+
+				$image = json_decode( $body, true );
+
+				$cached[ $k ]['image'] = [
+					'url'   => $image['source_url'] ?? '',
+					'alt'   => $image['alt_text'] ?? '',
+					'sizes' => $image['media_details']['sizes'] ?? ''
+				];
+			}
+		}
+
+		aioseo()->core->networkCache->update( 'rss_feed', $cached, 24 * HOUR_IN_SECONDS );
+
+		return $cached;
 	}
 }

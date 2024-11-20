@@ -135,15 +135,33 @@ class CR_Reviews_List_Table extends WP_List_Table {
 			'order' => $order,
 			'type__not_in' => array( 'cr_qna' )
 		);
-		if( 'product_review' === $comment_type ) {
+		if ( 'f_product_review' === $comment_type ) {
+			// filter by featured product reviews
+			$args['post_type'] = 'product';
+			$args['meta_query'][] = array(
+				'key' => 'ivole_featured',
+				'compare' => '>',
+				'value' => '0',
+				'type' => 'NUMERIC'
+			);
+		} elseif ( 'product_review' === $comment_type ) {
 			// filter by product reviews
 			$args['post_type'] = 'product';
-		} elseif( 'store_review' === $comment_type ) {
+		} elseif ( 'f_store_review' === $comment_type ) {
+			// filter by featured store reviews
+			$args['post__in'] = self::get_shop_page();
+			$args['meta_query'][] = array(
+				'key' => 'ivole_featured',
+				'compare' => '>',
+				'value' => '0',
+				'type' => 'NUMERIC'
+			);
+		} elseif ( 'store_review' === $comment_type ) {
 			// filter by store reviews
 			$args['post__in'] = self::get_shop_page();
 		} else {
 			// all reviews
-			add_filter( 'comments_clauses', array( $this, 'filter_include_shop_reviews' ), 10, 1 );
+			add_filter( 'comments_clauses', array( self::class, 'filter_include_shop_reviews' ), 10, 1 );
 		}
 		if( 'all' !== $cr_rating_type && 0 < $cr_rating_type && 6 > $cr_rating_type ) {
 			$args['meta_key'] = 'rating';
@@ -162,9 +180,14 @@ class CR_Reviews_List_Table extends WP_List_Table {
 			$this->pending_count = get_pending_comments_num( $_comment_post_ids );
 		}
 
-		if( 'product_review' !== $comment_type && 'store_review' !== $comment_type ) {
+		if (
+			'f_product_review' !== $comment_type &&
+			'product_review' !== $comment_type &&
+			'f_store_review' !== $comment_type &&
+			'store_review' !== $comment_type
+		) {
 			// all reviews
-			add_filter( 'comments_clauses', array( $this, 'filter_include_shop_reviews' ), 10, 1 );
+			add_filter( 'comments_clauses', array( self::class, 'filter_include_shop_reviews' ), 10, 1 );
 		}
 		$total_comments = get_comments( array_merge( $args, array(
 			'count'     => true,
@@ -184,15 +207,7 @@ class CR_Reviews_List_Table extends WP_List_Table {
 	* @return int
 	*/
 	public function get_per_page( $comment_status = 'all' ) {
-		$comments_per_page = $this->get_items_per_page( 'edit_comments_per_page' );
-		/**
-		* Filters the number of comments listed per page in the comments list table.
-		*
-		* @since 2.6.0
-		*
-		* @param int    $comments_per_page The number of comments to list per page.
-		* @param string $comment_status    The comment status name. Default 'All'.
-		*/
+		$comments_per_page = $this->get_items_per_page( 'reviews_per_page', 10 );
 		return apply_filters( 'comments_per_page', $comments_per_page, $comment_status );
 	}
 
@@ -459,7 +474,9 @@ class CR_Reviews_List_Table extends WP_List_Table {
 		 * @param string[] $comment_types Array of comment type labels keyed by their name.
 		 */
 		$comment_types = array(
+			'f_product_review' => __( 'Featured product reviews', 'customer-reviews-woocommerce' ),
 			'product_review' => __( 'Product reviews', 'customer-reviews-woocommerce' ),
+			'f_store_review'   => __( 'Featured store reviews', 'customer-reviews-woocommerce' ),
 			'store_review'   => __( 'Store reviews', 'customer-reviews-woocommerce' )
 		);
 
@@ -484,8 +501,26 @@ class CR_Reviews_List_Table extends WP_List_Table {
 					'number' => 1,
 					'type' => 'review'
 				);
+				if( 'f_product_review' === $type ) {
+					$args['post__not_in'] = $shop_page_ids;
+					$args['meta_query'][] = array(
+						'key' => 'ivole_featured',
+						'compare' => '>',
+						'value' => '0',
+						'type' => 'NUMERIC'
+					);
+				}
 				if( 'product_review' === $type ) {
 					$args['post__not_in'] = $shop_page_ids;
+				}
+				if( 'f_store_review' === $type ) {
+					$args['post__in'] = $shop_page_ids;
+					$args['meta_query'][] = array(
+						'key' => 'ivole_featured',
+						'compare' => '>',
+						'value' => '0',
+						'type' => 'NUMERIC'
+					);
 				}
 				if( 'store_review' === $type ) {
 					$args['post__in'] = $shop_page_ids;
@@ -963,12 +998,14 @@ class CR_Reviews_List_Table extends WP_List_Table {
 
 			if ( $pics_n > 0 ) {
 				for ( $i = 0; $i < $pics_n; $i++ ) {
-					echo '<div class="iv-comment-image">';
-					echo '<a href="' . $pics[$i]['url'] . $cr_query . '" class="cr-comment-a" rel="nofollow"><img src="' .
-					$pics[$i]['url'] . $cr_query . '" alt="' . sprintf( __( 'Image #%1$d from ', 'customer-reviews-woocommerce' ), $k ) .
-					$comment->comment_author . '"></a>';
-					echo '</div>';
-					$k++;
+					if ( isset( $pics[$i]['url'] ) ) {
+						echo '<div class="iv-comment-image">';
+						echo '<a href="' . $pics[$i]['url'] . $cr_query . '" class="cr-comment-a" rel="nofollow"><img src="' .
+						$pics[$i]['url'] . $cr_query . '" alt="' . sprintf( __( 'Image #%1$d from ', 'customer-reviews-woocommerce' ), $k ) .
+						$comment->comment_author . '"></a>';
+						echo '</div>';
+						$k++;
+					}
 				}
 			}
 
@@ -1266,9 +1303,15 @@ protected function count_reviews( $post_id, $comment_type, $rating_type ) {
 		} else {
 			$in_shop_page = 0;
 		}
-		if ( 'product_review' === $comment_type ) {
+		if ( 'f_product_review' === $comment_type ) {
+			// filter by featured product reviews
+			$where = "WHERE n.comment_type NOT IN ( 'cr_qna' ) AND m.post_type = 'product' AND ( cm.meta_key = 'ivole_featured' AND cm.meta_value > 0 )";
+		} elseif ( 'product_review' === $comment_type ) {
 			// filter by product reviews
 			$where = "WHERE n.comment_type NOT IN ( 'cr_qna' ) AND m.post_type = 'product'";
+		} elseif ( 'f_store_review' === $comment_type ) {
+			// filter by featured store reviews
+			$where = "WHERE ( n.comment_type NOT IN ( 'cr_qna' ) AND n.comment_post_ID IN ( " . $in_shop_page . " ) ) AND ( cm.meta_key = 'ivole_featured' AND cm.meta_value > 0 )";
 		} elseif ( 'store_review' === $comment_type ) {
 			// filter by store reviews
 			$where = "WHERE ( n.comment_type NOT IN ( 'cr_qna' ) AND n.comment_post_ID IN ( " . $in_shop_page . " ) )";
@@ -1283,7 +1326,14 @@ protected function count_reviews( $post_id, $comment_type, $rating_type ) {
 		$left_join = "LEFT JOIN {$wpdb->posts} AS m ON n.comment_post_ID = m.ID LEFT JOIN {$wpdb->commentmeta} AS cm ON n.comment_ID = cm.comment_id";
 		$where .= $wpdb->prepare( " AND ( cm.meta_key = 'rating' AND cm.meta_value = %d )", intval( $rating_type ) );
 	} else {
-		$left_join = "LEFT JOIN {$wpdb->posts} AS m ON n.comment_post_ID = m.ID";
+		if (
+			'f_product_review' === $comment_type ||
+			'f_store_review' === $comment_type
+		) {
+			$left_join = "LEFT JOIN {$wpdb->posts} AS m ON n.comment_post_ID = m.ID LEFT JOIN {$wpdb->commentmeta} AS cm ON n.comment_ID = cm.comment_id";
+		} else {
+			$left_join = "LEFT JOIN {$wpdb->posts} AS m ON n.comment_post_ID = m.ID";
+		}
 	}
 
 	$totals = (array) $wpdb->get_results( "
@@ -1401,7 +1451,7 @@ protected function comments_bubble( $post_id, $pending_comments ) {
 		}
 	}
 
-	public function filter_include_shop_reviews( $pieces ) {
+	public static function filter_include_shop_reviews( $pieces ) {
 		global $wpdb;
 		$shop_page = self::get_shop_page();
 		if( $shop_page ) {
@@ -1412,7 +1462,7 @@ protected function comments_bubble( $post_id, $pending_comments ) {
 			$pieces['join'] .= " JOIN $wpdb->posts AS crposts ON crposts.ID = $wpdb->comments.comment_post_ID";
 			$pieces['where'] .= " AND ( crposts.post_type = 'product' )";
 		}
-		remove_filter( 'comments_clauses', array ( $this, 'filter_include_shop_reviews' ) );
+		remove_filter( 'comments_clauses', array ( self::class, 'filter_include_shop_reviews' ) );
 		return $pieces;
 	}
 

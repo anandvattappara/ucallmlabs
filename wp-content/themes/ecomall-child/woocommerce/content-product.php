@@ -28,13 +28,7 @@ if ( empty( $product ) || ! $product->is_visible() ) {
 <section <?php wc_product_class( 'product', $product ); ?> data-product_id="<?php echo esc_attr($product->get_id()); ?>">
 	<div class="product-wrapper">
 		<?php do_action( 'woocommerce_before_shop_loop_item' ); ?>
-	<?PHP
-	if(is_product_category() || is_product_tag()){
-	?>
-		
-		<div class="meta-wrapper gridmeta-wrapper">
-			<?php do_action( 'woocommerce_after_shop_loop_item' ); ?>
-		</div>
+	
 		<div class="thumbnail-wrapper">
 			<a href="<?php the_permalink(); ?>">
 				<?php
@@ -63,45 +57,9 @@ if ( empty( $product ) || ! $product->is_visible() ) {
 					 */
 					do_action( 'woocommerce_after_shop_loop_item_title' );
 				?>
-			<?PHP
-			}
-			else{
-			?>
-			
-		<div class="thumbnail-wrapper">
-			<a href="<?php the_permalink(); ?>">
-				<?php
-					/**
-					 * woocommerce_before_shop_loop_item_title hook
-					 *
-					 * @hooked woocommerce_show_product_loop_sale_flash - 10
-					 * @hooked woocommerce_template_loop_product_thumbnail - 10
-					 */
-					do_action( 'woocommerce_before_shop_loop_item_title' );
-				?>
-			</a>
-				<?php
-					/**
-					 * woocommerce_shop_loop_item_title hook.
-					 *
-					 * @hooked woocommerce_template_loop_product_title - 10
-					 */
-					do_action( 'woocommerce_shop_loop_item_title' );
-	
-					/**
-					 * woocommerce_after_shop_loop_item_title hook
-					 *
-					 * @hooked woocommerce_template_loop_rating - 5
-					 * @hooked woocommerce_template_loop_price - 10
-					 */
-					do_action( 'woocommerce_after_shop_loop_item_title' );
-				?>
-				<div class="meta-wrapper">
-			<?php do_action( 'woocommerce_after_shop_loop_item' ); ?>
 		</div>
-			<?PHP
-			}
-			?>
+		<div class="meta-wrapper">
+			<?php do_action( 'woocommerce_after_shop_loop_item' ); ?>
 		</div>
 	</div>
 </section>

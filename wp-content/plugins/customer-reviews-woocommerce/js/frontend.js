@@ -47,10 +47,86 @@
 				}
 			}
 		});
-		//show lightbox when click on images in reviews grid
+		// play a video when a user clicks on it in the reviews grid
+		jQuery(".cr-reviews-grid").on("click", ".image-row-vid, .cr-comment-videoicon", function(t) {
+			if( ! jQuery(this).closest(".image-row").hasClass( "cr-vid-playing" ) ) {
+				jQuery(this).closest(".image-row").addClass( "cr-vid-playing" );
+				jQuery(this).closest(".image-row").find(".image-row-vid").prop( "controls", true );
+				jQuery(this).closest(".image-row").find(".image-row-vid").get(0).play();
+			} else {
+				jQuery(this).closest(".image-row").find(".image-row-vid").get(0).pause();
+				jQuery(this).closest(".image-row").find(".image-row-vid").prop( "controls", false );
+				jQuery(this).closest(".image-row").removeClass( "cr-vid-playing" );
+			}
+			return false;
+		} );
+		// play a video when a user clicks on it in the media pop-up window
+		jQuery(".cr-ajax-reviews-cus-images-modal").on("click", ".cr-ajax-reviews-video, .cr-ajax-reviews-video .cr-comment-videoicon", function(t) {
+			if( ! jQuery(this).closest(".cr-ajax-reviews-video").hasClass( "cr-vid-playing" ) ) {
+				jQuery(this).closest(".cr-ajax-reviews-video").addClass( "cr-vid-playing" );
+				jQuery(this).closest(".cr-ajax-reviews-video").find("video").prop( "controls", true );
+				jQuery(this).closest(".cr-ajax-reviews-video").find("video").get(0).play();
+			} else {
+				jQuery(this).closest(".cr-ajax-reviews-video").find("video").get(0).pause();
+				jQuery(this).closest(".cr-ajax-reviews-video").find("video").prop( "controls", false );
+				jQuery(this).closest(".cr-ajax-reviews-video").removeClass( "cr-vid-playing" );
+			}
+			return false;
+		} );
+		// open a gallery with media files in the reviews grid
+		jQuery(".cr-reviews-grid").on("click", ".media-row-count", function(t) {
+			if ( cr_ajax_object.disable_lightbox === '0' ) {
+				// only if lightbox is not disabled in settings of the plugin
+				t.preventDefault();
+				const oo = jQuery(".pswp");
+				let media = jQuery(this).parent().find(".image-row-vid,.image-row-img"),
+					this_media = jQuery(this),
+					inx = 0;
+				if (media.length > 0 && this_media.length > 0) {
+					const o = oo[0];
+					var a = [];
+					for (i = 0; i < media.length; i++) {
+						if ( "vid" === media[i].dataset.crmedia ) {
+							a.push({
+								html: '<div class="cr-video-wrapper"><video class="cr-media-video" src="' + media[i].src + '" controls></video></div>',
+								title: media[i].dataset.crtitle
+							});
+						} else {
+							a.push({
+								src: media[i].src,
+								w: media[i].naturalWidth,
+								h: media[i].naturalHeight,
+								title: media[i].alt
+							});
+						}
+						if (this_media[0].src == media[i].src) {
+							inx = i;
+						}
+					}
+					var r = {
+						index: inx
+					};
+					new PhotoSwipe(o, PhotoSwipeUI_Default, a, r).init();
+				}
+			}
+		} );
+		// play or pause a video in the gallery
+		jQuery(document).on("click", ".cr-video-wrapper .cr-media-video", function(t) {
+			const vid = jQuery(this).get(0);
+			if ( vid ) {
+				const isVideoPlaying = !!( vid.currentTime > 0 && !vid.paused && !vid.ended && vid.readyState > 2 );
+				if ( isVideoPlaying ) {
+					vid.pause();
+				} else {
+					vid.play();
+				}
+			}
+			return false;
+		} );
+		// show a lightbox when a user clicks on images in the reviews grid
 		jQuery(".cr-reviews-grid").on("click", ".image-row-img, .image-row-count", function(t) {
 			if(cr_ajax_object.disable_lightbox === '0') {
-				//only if lightbox is not disabled in settings of the plugin
+				// only if lightbox is not disabled in settings of the plugin
 				t.preventDefault();
 				const oo = jQuery(".pswp");
 				if ( 0 < oo.length ) {
@@ -304,27 +380,32 @@
 			}
 		} );
 		//open popup window with pictures
-		jQuery(".cr-comment-image-top img").on( "click", function(t) {
+		jQuery(".cr-comment-image-top .cr-comment-image-top-item").on( "click", function(t) {
 			t.preventDefault();
-			var slide_no = jQuery(this).data("slide");
-			jQuery("#reviews.cr-reviews-ajax-reviews div.cr-ajax-reviews-cus-images-modal-cont").addClass("cr-mask-active");
 			jQuery("body").addClass("cr-noscroll");
-			jQuery("#reviews.cr-reviews-ajax-reviews div.cr-ajax-reviews-cus-images-modal div.cr-ajax-reviews-cus-images-slider-main").slick('setPosition');
-			jQuery("#reviews.cr-reviews-ajax-reviews div.cr-ajax-reviews-cus-images-modal div.cr-ajax-reviews-cus-images-slider-nav").slick('setPosition');
-			if(typeof slide_no !== 'undefined') {
-				jQuery("#reviews.cr-reviews-ajax-reviews div.cr-ajax-reviews-cus-images-modal div.cr-ajax-reviews-cus-images-slider-main").slick('slickGoTo',slide_no,true);
-				jQuery("#reviews.cr-reviews-ajax-reviews div.cr-ajax-reviews-cus-images-modal div.cr-ajax-reviews-cus-images-slider-nav").slick('slickGoTo',slide_no,true);
+			let slide_no = jQuery(this).data("slide");
+			let imgParent = jQuery(this).closest(".cr-ajax-reviews-cus-images-div").parent();
+			imgParent.find(".cr-ajax-reviews-cus-images-modal-cont").addClass("cr-mask-active");
+			imgParent.find(".cr-ajax-reviews-cus-images-modal .cr-ajax-reviews-cus-images-slider-main").slickk('setPosition');
+			imgParent.find(".cr-ajax-reviews-cus-images-modal .cr-ajax-reviews-cus-images-slider-nav").slickk('setPosition');
+			if ( typeof slide_no !== 'undefined' ) {
+				imgParent.find(".cr-ajax-reviews-cus-images-modal .cr-ajax-reviews-cus-images-slider-main").slickk('slickGoTo', slide_no, true);
+				imgParent.find(".cr-ajax-reviews-cus-images-modal .cr-ajax-reviews-cus-images-slider-nav").slickk('slickGoTo', slide_no, true);
 			}
 		} );
+		jQuery(".cr-comment-image-top .cr-comment-videoicon").on( "click", function(t) {
+			jQuery(this).closest( ".cr-comment-image-top" ).find( ".cr-comment-image-top-item" ).trigger( "click" );
+		} );
 		//close popup window with pictures
-		jQuery("#reviews.cr-reviews-ajax-reviews div.cr-ajax-reviews-cus-images-modal-cont, #reviews.cr-reviews-ajax-reviews div.cr-ajax-reviews-cus-images-modal button.cr-ajax-reviews-cus-images-close").on( "click", function(t) {
+		jQuery(".cr-ajax-reviews-cus-images-modal-cont, .cr-ajax-reviews-cus-images-modal .cr-ajax-reviews-cus-images-close").on( "click", function(t) {
 			t.preventDefault();
-			jQuery("#reviews.cr-reviews-ajax-reviews .cr-mask-active div.cr-ajax-reviews-cus-images-modal div.cr-ajax-reviews-cus-images-slider-main").slick('slickGoTo',0,true);
-			jQuery("#reviews.cr-reviews-ajax-reviews .cr-mask-active div.cr-ajax-reviews-cus-images-modal div.cr-ajax-reviews-cus-images-slider-nav").slick('slickGoTo',0,true);
-			jQuery("#reviews.cr-reviews-ajax-reviews div.cr-ajax-reviews-cus-images-modal-cont").removeClass("cr-mask-active");
+			let closeParent = jQuery(this).closest(".cr-ajax-reviews-cus-images-modal-cont.cr-mask-active");
+			closeParent.find(".cr-ajax-reviews-cus-images-modal .cr-ajax-reviews-cus-images-slider-main").slickk('slickGoTo',0,true);
+			closeParent.find(".cr-ajax-reviews-cus-images-modal .cr-ajax-reviews-cus-images-slider-nav").slickk('slickGoTo',0,true);
+			closeParent.removeClass("cr-mask-active");
 			jQuery("body").removeClass("cr-noscroll");
 		} );
-		jQuery("#reviews.cr-reviews-ajax-reviews div.cr-ajax-reviews-cus-images-modal").on( "click", function(t) {
+		jQuery(".cr-ajax-reviews-cus-images-modal-cont .cr-ajax-reviews-cus-images-modal").on( "click", function(t) {
 			t.stopPropagation();
 		} );
 		//Product variations
@@ -507,14 +588,14 @@
 			let parent = jQuery(this).parents(".review-text");
 			parent.find(".cr-slider-read-more").hide();
 			parent.find(".cr-slider-details").css("display", "inline");
-			jQuery(this).parents(".cr-reviews-slider").slick('setPosition');
+			jQuery(this).parents(".cr-reviews-slider").slickk('setPosition');
 		} );
 		jQuery( '.cr-reviews-slider' ).on( 'click', '.cr-slider-read-less a', function (e) {
 			e.preventDefault();
 			let parent = jQuery(this).parents(".review-text");
 			parent.find(".cr-slider-details").hide();
 			parent.find(".cr-slider-read-more").css("display", "inline");
-			jQuery(this).parents(".cr-reviews-slider").slick('setPosition');
+			jQuery(this).parents(".cr-reviews-slider").slickk('setPosition');
 		} );
 		jQuery('#cr_qna.cr-qna-block .cr-qna-search-block button.cr-qna-ask-button').on( 'click', function (e) {
 			e.preventDefault();
@@ -655,11 +736,19 @@
 		jQuery("body").on("click", "a.cr-qna-link", function () {
 			const cr_qna_tab = jQuery( '.cr_qna_tab a' );
 			if( cr_qna_tab.length ) {
-				cr_qna_tab.click();
+				cr_qna_tab.trigger( "click" );
 			} else {
 				jQuery( '.cr-qna-block' ).parents( ':hidden' ).show();
 			}
 			return true;
+		});
+		// show Reviews tab
+		jQuery("body").on("click", ".cr-review-link", function () {
+			const wc_reviews_tab = jQuery( '.reviews_tab a' );
+			if( wc_reviews_tab.length ) {
+				wc_reviews_tab.trigger( "click" );
+				return true;
+			}
 		});
 
 		// upload images with a review

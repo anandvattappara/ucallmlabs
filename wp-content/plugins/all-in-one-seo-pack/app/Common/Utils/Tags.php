@@ -38,84 +38,16 @@ class Tags {
 	 * @var array
 	 */
 	private $context = [
-		'rss'                 => [
-			'author_link',
-			'author_link_alt',
-			'author_name',
-			'featured_image',
-			'post_date',
-			'post_link',
-			'post_link_alt',
-			'post_title',
-			'site_link',
-			'site_link_alt',
-			'site_title',
-			'taxonomy_title'
-		],
-		'homePage'            => [
+		'authorDescription'   => [
+			'author_bio',
 			'author_first_name',
 			'author_last_name',
 			'author_name',
-			'current_date',
-			'current_day',
-			'current_month',
-			'current_year',
-			'post_date',
-			'post_day',
-			'post_excerpt',
-			'post_excerpt_only',
-			'post_month',
-			'post_title',
-			'post_year',
-			'separator_sa',
-			'site_title',
-			'tagline'
-		],
-		'postTitle'           => [
-			'author_first_name',
-			'author_last_name',
-			'author_name',
-			'taxonomy_title',
-			'categories',
 			'current_date',
 			'current_day',
 			'current_month',
 			'current_year',
 			'custom_field',
-			'tax_name',
-			'permalink',
-			'post_content',
-			'post_date',
-			'post_day',
-			'post_excerpt',
-			'post_excerpt_only',
-			'post_month',
-			'post_title',
-			'post_year',
-			'separator_sa',
-			'site_title',
-			'tagline'
-		],
-		'postDescription'     => [
-			'author_first_name',
-			'author_last_name',
-			'author_name',
-			'taxonomy_title',
-			'current_date',
-			'current_day',
-			'current_month',
-			'current_year',
-			'custom_field',
-			'tax_name',
-			'permalink',
-			'post_content',
-			'post_date',
-			'post_day',
-			'post_excerpt',
-			'post_excerpt_only',
-			'post_month',
-			'post_title',
-			'post_year',
 			'separator_sa',
 			'site_title',
 			'tagline'
@@ -131,10 +63,82 @@ class Tags {
 			'custom_field',
 			'separator_sa',
 			'site_title',
-			'tagline',
+			'tagline'
 		],
-		'authorDescription'   => [
-			'author_bio',
+		'descriptionFormat'   => [
+			'current_date',
+			'current_day',
+			'current_month',
+			'current_year',
+			'custom_field',
+			'description',
+			'post_date',
+			'post_month',
+			'post_title',
+			'post_year',
+			'separator_sa',
+			'site_title',
+			'tagline'
+		],
+		'dateDescription'     => [
+			'archive_date',
+			'archive_title',
+			'current_date',
+			'current_day',
+			'current_month',
+			'current_year',
+			'custom_field',
+			'post_day',
+			'post_month',
+			'post_year',
+			'separator_sa',
+			'site_title',
+			'tagline'
+		],
+		'dateTitle'           => [
+			'archive_date',
+			'archive_title',
+			'current_date',
+			'current_day',
+			'current_month',
+			'current_year',
+			'custom_field',
+			'post_day',
+			'post_month',
+			'post_year',
+			'separator_sa',
+			'site_title',
+			'tagline'
+		],
+		'homePage'            => [
+			'author_first_name',
+			'author_last_name',
+			'author_name',
+			'current_date',
+			'current_day',
+			'current_month',
+			'current_year',
+			'post_date',
+			'post_day',
+			'post_excerpt_only',
+			'post_excerpt',
+			'post_month',
+			'post_title',
+			'post_year',
+			'separator_sa',
+			'site_title',
+			'tagline'
+		],
+		'knowledgeGraph'      => [
+			'separator_sa',
+			'site_title',
+			'tagline'
+		],
+		'pagedFormat'         => [
+			'page_number',
+			'separator_sa'
+		],
+		'postDescription'     => [
 			'author_first_name',
 			'author_last_name',
 			'author_name',
@@ -143,50 +147,85 @@ class Tags {
 			'current_month',
 			'current_year',
 			'custom_field',
-			'separator_sa',
-			'site_title',
-			'tagline',
-		],
-		'dateTitle'           => [
-			'archive_title',
-			'current_date',
-			'current_day',
-			'current_month',
-			'current_year',
-			'custom_field',
-			'archive_date',
+			'permalink',
+			'post_content',
+			'post_date',
 			'post_day',
+			'post_excerpt_only',
+			'post_excerpt',
 			'post_month',
+			'post_title',
 			'post_year',
 			'separator_sa',
 			'site_title',
 			'tagline',
+			'tax_name',
+			'taxonomy_title'
 		],
-		'dateDescription'     => [
-			'archive_title',
+		'postTitle'           => [
+			'author_first_name',
+			'author_last_name',
+			'author_name',
+			'categories',
 			'current_date',
 			'current_day',
 			'current_month',
 			'current_year',
-			'archive_date',
+			'custom_field',
+			'permalink',
+			'post_content',
+			'post_date',
 			'post_day',
+			'post_excerpt_only',
+			'post_excerpt',
 			'post_month',
+			'post_title',
 			'post_year',
-			'custom_field',
 			'separator_sa',
 			'site_title',
 			'tagline',
+			'tax_name',
+			'taxonomy_title'
 		],
-		'searchTitle'         => [
+		'rss'                 => [
+			'author_link',
+			'author_link_alt',
+			'author_name',
+			'featured_image',
+			'post_date',
+			'post_link',
+			'post_link_alt',
+			'post_title',
+			'site_link',
+			'site_link_alt',
+			'site_title',
+			'taxonomy_title'
+		],
+		'schema'              => [
+			'author_first_name',
+			'author_last_name',
+			'author_name',
+			'author_url',
+			'categories',
 			'current_date',
 			'current_day',
 			'current_month',
 			'current_year',
 			'custom_field',
-			'search_term',
+			'permalink',
+			'post_content',
+			'post_date',
+			'post_day',
+			'post_excerpt_only',
+			'post_excerpt',
+			'post_month',
+			'post_title',
+			'post_year',
 			'separator_sa',
 			'site_title',
 			'tagline',
+			'tax_name',
+			'taxonomy_title'
 		],
 		'searchDescription'   => [
 			'current_date',
@@ -197,20 +236,17 @@ class Tags {
 			'search_term',
 			'separator_sa',
 			'site_title',
-			'tagline',
+			'tagline'
 		],
-		'siteTitle'           => [
+		'searchTitle'         => [
 			'current_date',
 			'current_day',
 			'current_month',
 			'current_year',
-			'permalink',
-			'post_date',
-			'post_day',
-			'post_month',
-			'post_year',
+			'custom_field',
 			'search_term',
 			'separator_sa',
+			'site_title',
 			'tagline'
 		],
 		'siteDescription'     => [
@@ -227,77 +263,46 @@ class Tags {
 			'separator_sa',
 			'tagline'
 		],
-		'taxonomyTitle'       => [
-			'taxonomy_description',
-			'taxonomy_title',
+		'siteTitle'           => [
 			'current_date',
 			'current_day',
 			'current_month',
 			'current_year',
-			'custom_field',
 			'permalink',
-			'separator_sa',
-			'site_title',
-			'tagline',
-			'tax_parent_name'
-		],
-		'taxonomyDescription' => [
-			'taxonomy_description',
-			'taxonomy_title',
-			'current_date',
-			'current_day',
-			'current_month',
-			'current_year',
-			'custom_field',
-			'permalink',
-			'separator_sa',
-			'site_title',
-			'tagline'
-		],
-		'descriptionFormat'   => [
-			'description',
-			'current_date',
-			'current_day',
-			'current_month',
-			'current_year',
-			'custom_field',
-			'post_title',
-			'post_date',
-			'post_month',
-			'post_year',
-			'separator_sa',
-			'site_title',
-			'tagline',
-		],
-		'pagedFormat'         => [
-			'page_number',
-			'separator_sa'
-		],
-		'schema'              => [
-			'author_first_name',
-			'author_last_name',
-			'author_name',
-			'author_url',
-			'taxonomy_title',
-			'categories',
-			'current_date',
-			'current_day',
-			'current_month',
-			'current_year',
-			'custom_field',
-			'tax_name',
-			'permalink',
-			'post_content',
 			'post_date',
 			'post_day',
-			'post_excerpt',
-			'post_excerpt_only',
 			'post_month',
-			'post_title',
 			'post_year',
+			'search_term',
+			'separator_sa',
+			'tagline'
+		],
+		'taxonomyDescription' => [
+			'current_date',
+			'current_day',
+			'current_month',
+			'current_year',
+			'custom_field',
+			'permalink',
 			'separator_sa',
 			'site_title',
-			'tagline'
+			'tagline',
+			'taxonomy_description',
+			'taxonomy_title'
+		],
+		'taxonomyTitle'       => [
+			'current_date',
+			'current_day',
+			'current_month',
+			'current_year',
+			'custom_field',
+			'permalink',
+			'separator_sa',
+			'site_title',
+			'tagline',
+			'tax_parent_name',
+			'taxonomy_description',
+			'taxonomy_title'
 		]
 	];
 
@@ -634,7 +639,7 @@ class Tags {
 			$context[ $postType['name'] . 'Description' ] = $context['postDescription'];
 
 			// Check if the post type has an excerpt.
-			if ( empty( $postType['hasExcerpt'] ) ) {
+			if ( empty( $postType['supports']['excerpt'] ) ) {
 				$phpTitleKey = array_search( 'post_excerpt', $context[ $postType['name'] . 'Title' ], true );
 				if ( false !== $phpTitleKey ) {
 					unset( $context[ $postType['name'] . 'Title' ][ $phpTitleKey ] );
@@ -788,7 +793,7 @@ class Tags {
 	 * @param  int    $id     The page or post ID.
 	 * @return string         The string with tags replaced.
 	 */
-	public function replaceTags( $string, $id ) {
+	public function replaceTags( $string, $id = 0 ) {
 		if ( ! $string || ! preg_match( '/#/', $string ) ) {
 			return $string;
 		}
@@ -812,7 +817,7 @@ class Tags {
 		$string = $this->parseTaxonomyNames( $string, $id );
 
 		// Custom fields are parsed separately.
-		$string = $this->parseCustomFields( $string );
+		$string = $this->parseCustomFields( $string, $id );
 
 		return preg_replace( '/%\|%/im', '', $string );
 	}
@@ -1040,8 +1045,9 @@ class Tags {
 	 * @return string          The category title.
 	 */
 	private function getTaxonomyTitle( $postId = null ) {
-		$title = '';
-		if ( aioseo()->helpers->isWooCommerceActive() && is_product_category() ) {
+		$isWcActive = aioseo()->helpers->isWooCommerceActive();
+		$title      = '';
+		if ( $isWcActive && is_product_category() ) {
 			$title = single_cat_title( '', false );
 		} elseif ( is_category() ) {
 			$title = single_cat_title( '', false );
@@ -1058,6 +1064,8 @@ class Tags {
 		}
 
 		if ( $postId ) {
+			$currentScreen  = aioseo()->helpers->getCurrentScreen();
+			$isProduct      = $isWcActive && ( is_product() || 'product' === ( $currentScreen->post_type ?? '' ) );
 			$post           = aioseo()->helpers->getPost( $postId );
 			$postTaxonomies = get_object_taxonomies( $post, 'objects' );
 			$postTerms      = [];
@@ -1066,24 +1074,21 @@ class Tags {
 					continue;
 				}
 
-				$primaryTerm = aioseo()->standalone->primaryTerm->getPrimaryTerm( $postId, $taxonomySlug );
+				$taxonomySlug = $isProduct ? 'product_cat' : $taxonomySlug;
+				$primaryTerm  = aioseo()->standalone->primaryTerm->getPrimaryTerm( $postId, $taxonomySlug );
 				if ( $primaryTerm ) {
 					$postTerms[] = get_term( $primaryTerm, $taxonomySlug );
-					continue;
+					break;
 				}
 
 				$postTaxonomyTerms = get_the_terms( $postId, $taxonomySlug );
 				if ( is_array( $postTaxonomyTerms ) ) {
 					$postTerms = array_merge( $postTerms, $postTaxonomyTerms );
+					break;
 				}
 			}
 
 			$title = $postTerms ? $postTerms[0]->name : '';
-
-			if ( aioseo()->helpers->isWooCommerceActive() && is_product() ) {
-				$terms = get_the_terms( $postId, 'product_cat' );
-				$title = $terms ? $terms[0]->name : '';
-			}
 		}
 
 		return wp_strip_all_tags( (string) $title );
@@ -1140,11 +1145,15 @@ class Tags {
 	 * @since 4.0.0
 	 *
 	 * @param  string $string The string to parse customs fields out of.
+	 * @param  int    $postId The page or post ID.
 	 * @return mixed          The new title.
 	 */
-	public function parseCustomFields( $string ) {
+	public function parseCustomFields( $string, $postId = 0 ) {
 		$pattern = '/' . $this->denotationChar . 'custom_field-([a-zA-Z0-9_-]+)/im';
-		$string  = preg_replace_callback( $pattern, [ $this, 'replaceCustomField' ], $string );
+		$matches = [];
+		preg_match_all( $pattern, $string, $matches, PREG_SET_ORDER );
+
+		$string  = $this->replaceCustomField( $string, $matches, $postId );
 		$pattern = '/' . $this->denotationChar . 'custom_field(?![a-zA-Z0-9_-])/im';
 
 		return preg_replace( $pattern, '', $string );
@@ -1212,29 +1221,38 @@ class Tags {
 	 *
 	 * @since 4.0.0
 	 *
+	 * @param  string      $string  The string to parse customs fields out of.
 	 * @param  array       $matches Array of matched values.
+	 * @param  int         $postId  The page or post ID.
 	 * @return bool|string          New title/text.
 	 */
-	private function replaceCustomField( $matches ) {
-		$result = '';
-		if ( ! empty( $matches ) ) {
-			if ( ! empty( $matches[1] ) ) {
+	private function replaceCustomField( $string, $matches, $postId ) {
+		if ( empty( $matches ) ) {
+			return $string;
+		}
+
+		foreach ( $matches as $match ) {
+			$str = '';
+			if ( ! empty( $match[1] ) ) {
 				if ( function_exists( 'get_field' ) ) {
-					$result = get_field( $matches[1], get_queried_object() );
+					$str = get_field( $match[1], get_queried_object() ?? $postId );
 				}
-				if ( empty( $result ) ) {
+
+				if ( empty( $str ) ) {
 					global $post;
 					if ( ! empty( $post ) ) {
-						$result = get_post_meta( $post->ID, $matches[1], true );
+						$str = get_post_meta( $post->ID, $match[1], true );
 					}
 				}
 			} else {
-				$result = $matches[0];
+				$str = $match[0];
 			}
-		}
-		$result = wp_strip_all_tags( $result );
 
-		return '%|%' . $result;
+			$str = wp_strip_all_tags( $str );
+			$string = str_replace( $match[0], '%|%' . $str, $string );
+		}
+
+		return $string;
 	}
 
 	/**

@@ -18,6 +18,9 @@ if ( ! class_exists( 'Wpcpq_Cart' ) ) {
 			add_action( 'woocommerce_before_calculate_totals', [ $this, 'before_calculate_totals' ], 9999 );
 			add_action( 'woocommerce_before_mini_cart_contents', [ $this, 'mini_cart_contents' ], 9999 );
 			add_filter( 'woocommerce_cart_item_price', [ $this, 'cart_item_price' ], 10, 3 );
+
+			// Backend Order
+			add_filter( 'woocommerce_ajax_add_order_item_meta', [ $this, 'add_order_item_meta' ], 10, 3 );
 		}
 
 		public function before_calculate_totals( $cart ) {
@@ -34,8 +37,9 @@ if ( ! class_exists( 'Wpcpq_Cart' ) ) {
 						if ( Wpcpq_Helper()::is_enable( $product_id ) && apply_filters( 'wpcpq_enable_cart_item', true, $cart_item ) && ! apply_filters( 'wpcpq_ignore', false, $cart_item ) ) {
 							$ori_product = apply_filters( 'wpcpq_get_ori_product', wc_get_product( $product_id ), $cart_item, $cart_item_key );
 							$ori_price   = apply_filters( 'wpcpq_get_ori_product_price', $ori_product->get_price(), $cart_item, $cart_item_key );
-							$pricing     = Wpcpq_Helper()::get_pricing( $product_id );
-							$new_price   = Wpcpq_Helper()::get_price( $pricing['method'], $pricing['tiers'], $cart_item['quantity'], $ori_price );
+							$quantity    = apply_filters( 'wpcpq_cart_item_quantity', $cart_item['quantity'], $cart_item, $cart_item_key );
+							$pricing     = Wpcpq_Helper()::get_pricing( $product_id, 'cart' );
+							$new_price   = Wpcpq_Helper()::get_price( $pricing['method'], $pricing['tiers'], $quantity, $ori_price );
 							$new_price   = round( $new_price, wc_get_price_decimals() );
 
 							$cart_item['data']->set_price( $new_price );
@@ -70,7 +74,18 @@ if ( ! class_exists( 'Wpcpq_Cart' ) ) {
 			WC()->cart->calculate_totals();
 		}
 
+		public function add_order_item_meta( $item_id, $item, $order ) {
+			$product    = $item->get_product();
+			$product_id = $item->get_variation_id() ? $item->get_variation_id() : $item->get_product_id();
+			$quantity   = $item->get_quantity();
+			$pricing    = Wpcpq_Helper()::get_pricing( $product_id, 'order' );
+			$new_price  = Wpcpq_Helper()::get_price( $pricing['method'], $pricing['tiers'], $quantity, $product->get_price() );
 
+			$product->set_price( $new_price );
+			$order->add_product( $product, $quantity );
+			$order->remove_item( $item_id );
+			$order->save();
+		}
 	}
 
 	function Wpcpq_Cart() {

@@ -2,10 +2,10 @@
 # This file is distributed under the same license as the YITH WooCommerce Compare package.
 msgid ""
 msgstr ""
-"Project-Id-Version: YITH WooCommerce Compare 2.38.0\n"
+"Project-Id-Version: YITH WooCommerce Compare 2.44.0\n"
 "Report-Msgid-Bugs-To: "
 "https://wordpress.org/support/plugin/yith_woocommerce_compare\n"
-"POT-Creation-Date: 2024-04-15 11:50:48+00:00\n"
+"POT-Creation-Date: 2024-11-11 16:39:10+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -95,13 +95,13 @@ msgstr ""
 msgid "Dimensions"
 msgstr ""
 
-#: init.php:51
+#: init.php:52
 msgid ""
 "YITH WooCommerce Compare is enabled but not effective. It requires "
 "WooCommerce in order to work."
 msgstr ""
 
-#: init.php:65
+#: init.php:66
 msgid ""
 "You can't activate the free version of YITH WooCommerce Compare while you "
 "are using the premium one."

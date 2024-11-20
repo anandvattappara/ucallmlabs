@@ -617,6 +617,14 @@ li.select2-results__option {
 .ivole-new-settings .cr-twocols-cont .cr-twocols-sel .cr-twocols-chkbox svg {
 	display: block;
 }
+.ivole-new-settings .cr-twocols-error {
+	background-color: #ff8983;
+	padding: 5px 5px;
+	margin: 0 0 10px 0;
+	width: 100%;
+	max-width: 675px;
+	box-sizing: border-box;
+}
 .cr-verified-badge-status {
 	font-style: italic;
 	visibility: hidden;
@@ -857,7 +865,7 @@ li.select2-results__option {
 	width: 170px;
 }
 .ivole-new-settings .forminp-cr_sending_delay .cr-snd-dlay-table .cr-snd-dlay-tr input[type=number] {
-	width: 80px;
+	width: 70px;
 }
 .ivole-new-settings .forminp-cr_sending_delay .cr-snd-dlay-table .cr-snd-dlay-tr select,
 .ivole-new-settings .forminp-cr_enable_review_discount .cr-rev-disc-table .cr-rev-disc-table-tr select {
@@ -1347,9 +1355,16 @@ li.select2-results__option {
 	box-sizing: border-box;
 	vertical-align: top;
 }
+.ivole-new-settings table.form-table input[type=text].cr-admin-badge-label {
+	width: 100%;
+	max-width: 675px;
+}
 .ivole-new-settings table.form-table th {
 	position: relative;
 	padding-right: 24px;
+}
+.ivole-new-settings table.form-table th.cr-snd-dlay-table-narrow {
+	width: 140px;
 }
 .ivole-new-settings table.form-table th label {
 	position: relative;
@@ -1398,6 +1413,9 @@ li.select2-results__option {
 	float: right;
 	margin-left: 10px;
 	margin-top: -4px;
+}
+.ivole-new-settings .cr-settings-download-button.disabled {
+	pointer-events: none;
 }
 .cr-dns-records-acc {
 	max-width: 700px;
@@ -1775,7 +1793,8 @@ li.select2-results__option {
 	}
 	.ivole-new-settings table.form-table input[type=text],
 	.ivole-new-settings table.form-table input[type=number],
-	.ivole-new-settings table.form-table select {
+	.ivole-new-settings table.form-table select,
+	.ivole-new-settings table.form-table input[type=text].cr-admin-badge-label {
 		width: 100%;
 	}
 }
@@ -1807,8 +1826,12 @@ li.select2-results__option {
 	.ivole-new-settings .cr-rtn-crta-table,
 	.ivole-new-settings .cr-snd-dlay-table,
 	.ivole-new-settings .cr-cus-atts-table,
+	.ivole-new-settings .cr-rev-disc-table,
 	.ivole-new-settings .cr-dns-table {
 		width: 100%;
+	}
+	.ivole-new-settings table.form-table th.cr-snd-dlay-table-narrow {
+		width: auto;
 	}
 	.cr-dns-records-acc .cr-dns-table .cr-dns-col-type,
 	.cr-email-verify-status,
@@ -1816,10 +1839,12 @@ li.select2-results__option {
 	.cr-dns-records-acc .cr-dns-table-cont,
 	.ivole-new-settings table.form-table input[type=text],
 	.ivole-new-settings table.form-table input[type=number],
-	.ivole-new-settings table.form-table select {
+	.ivole-new-settings table.form-table select,
+	.ivole-new-settings table.form-table input[type=text].cr-admin-badge-label {
 		width: 100%;
 	}
 	.ivole-new-settings .cr-snd-dlay-table thead th:first-child,
+	.ivole-new-settings .cr-rev-disc-table thead th:first-child,
 	.ivole-new-settings .cr-cus-atts-table thead tr th:last-child,
 	.ivole-new-settings .cr-rtn-crta-table thead tr th:last-child {
 		display: none;

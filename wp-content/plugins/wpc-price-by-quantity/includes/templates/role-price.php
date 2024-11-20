@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-if ( strpos( $key, '**' ) === false ) {
+if ( ! str_contains( $key, '**' ) ) {
 	$role = $key;
 	$key  = Wpcpq_Helper()::generate_key() . '**' . $role;
 } else {

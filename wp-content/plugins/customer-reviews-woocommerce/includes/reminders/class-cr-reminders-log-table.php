@@ -29,7 +29,7 @@ if ( ! class_exists( 'CR_Reminders_Log_Table' ) ) :
 
 			$search = ( isset( $_REQUEST['s'] ) ) ? trim( esc_html( wp_unslash( $_REQUEST['s'] ) ) ) : '';
 			$status = isset( $_REQUEST['status'] ) ? $_REQUEST['status'] : 'rmd_all';
-			if ( ! in_array( $status, array( 'rmd_all', 'rmd_error', 'rmd_sent', 'rmd_opened', 'frm_opened' ) ) ) {
+			if ( ! in_array( $status, array( 'rmd_all', 'rmd_canceled', 'rmd_error', 'rmd_sent', 'rmd_opened', 'frm_opened' ) ) ) {
 				$status = 'rmd_all';
 			}
 
@@ -72,7 +72,7 @@ if ( ! class_exists( 'CR_Reminders_Log_Table' ) ) :
 				/* translators: please keep '%1$s' and '%2$s' as is   */
 				echo sprintf( __( 'Please log in to your account on %1$sCusRev website%2$s to view and manage the reminders.', 'customer-reviews-woocommerce' ), '<a href="https://www.cusrev.com/login.html" target="_blank" rel="noopener noreferrer">', '</a>' );
 			} else {
-				_e( 'There are currently no sent review reminders', 'customer-reviews-woocommerce' );
+				_e( 'There are no review reminders to display', 'customer-reviews-woocommerce' );
 			}
 		}
 
@@ -178,17 +178,7 @@ if ( ! class_exists( 'CR_Reminders_Log_Table' ) ) :
 		}
 
 		public function column_type( $reminder ) {
-			$type = '';
-			switch ($reminder['type']) {
-				case 'm':
-					$type = __( 'Manual', 'customer-reviews-woocommerce' );
-					break;
-				case 'a':
-					$type = __( 'Automatic', 'customer-reviews-woocommerce' );
-					break;
-				default:
-					break;
-			}
+			$type = CR_Reminders_Log::get_type_description( $reminder['type'] );
 			echo esc_html( $type );
 		}
 
@@ -242,6 +232,12 @@ if ( ! class_exists( 'CR_Reminders_Log_Table' ) ) :
 				'rmd_all' => _nx_noop(
 					'All <span class="count">(%s)</span>',
 					'All <span class="count">(%s)</span>',
+					'reminders',
+					'customer-reviews-woocommerce'
+				),
+				'rmd_canceled' => _nx_noop(
+					'Canceled <span class="count">(%s)</span>',
+					'Canceled <span class="count">(%s)</span>',
 					'reminders',
 					'customer-reviews-woocommerce'
 				),
@@ -300,6 +296,7 @@ if ( ! class_exists( 'CR_Reminders_Log_Table' ) ) :
 			global $search;
 
 			$reminders_count = array(
+				'rmd_canceled' => 0,
 				'rmd_error' => 0,
 				'rmd_sent' => 0,
 				'rmd_opened' => 0,
@@ -311,6 +308,10 @@ if ( ! class_exists( 'CR_Reminders_Log_Table' ) ) :
 
 			foreach ( $totals as $row ) {
 				switch ( $row['status'] ) {
+					case 'canceled':
+						$reminders_count['rmd_canceled'] = $row['total'];
+						$reminders_count['rmd_all'] += $row['total'];
+						break;
 					case 'error':
 						$reminders_count['rmd_error'] = $row['total'];
 						$reminders_count['rmd_all'] += $row['total'];

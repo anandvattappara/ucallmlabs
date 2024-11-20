@@ -86,12 +86,6 @@
                 jQuery(att).find('.enable_date').hide();
             }
         });
-        jQuery('body').on('change','.wcpoa_attach_type_list',function(){
-            var att=jQuery(this).parent().parent().parent(); 
-            var type=jQuery(this).val(); 
-            jQuery(att).find('.file_upload,.external_ulr').hide();
-            jQuery(att).find('.'+type).show();
-        });          
         jQuery('body').on('click','.attachment_action .-minus',function(){
             var element=jQuery(this).parent().parent().parent().parent().parent().parent();
             delete_row(element);
@@ -127,11 +121,11 @@
         
         /** Upgrade Dashboard Script START */
         // Dashboard features popup script
-        $(document).on('click', '.dotstore-upgrade-dashboard .unlock-premium-features .feature-box', function (event) {
+        $(document).on('click', '.dotstore-upgrade-dashboard .premium-key-fetures .premium-feature-popup', function (event) {
             let $trigger = $('.feature-explanation-popup, .feature-explanation-popup *');
             if(!$trigger.is(event.target) && $trigger.has(event.target).length === 0){
                 $('.feature-explanation-popup-main').not($(this).find('.feature-explanation-popup-main')).hide();
-                $(this).find('.feature-explanation-popup-main').show();
+                $(this).parents('li').find('.feature-explanation-popup-main').show();
                 $('body').addClass('feature-explanation-popup-visible');
             }
         });
@@ -213,17 +207,6 @@
         /** Plugin Setup Wizard Script End */
 
         /** Dynamic Promotional Bar START */
-        //set cookies
-        function setCookie(name, value, minutes) {
-            var expires = '';
-            if (minutes) {
-                var date = new Date();
-                date.setTime(date.getTime() + (minutes * 60 * 1000));
-                expires = '; expires=' + date.toUTCString();
-            }
-            document.cookie = name + '=' + (value || '') + expires + '; path=/';
-        }
-        
         $(document).on('click', '.dpbpop-close', function () {
             var popupName       = $(this).attr('data-popup-name');
             setCookie( 'banner_' + popupName, 'yes', 60 * 24 * 7);
@@ -255,15 +238,123 @@
         });
         /** Dynamic Promotional Bar END */
 
-        // script for updagrade to pro modal
-        $(document).on('click', '#dotsstoremain .wcpoa-pro-feature', function(){
+        // Script for updagrade to pro modal
+        $(document).on('click', '#dotsstoremain .wcpoa-pro-feature, .wcpoa-table-main .wcpoa-in-pro-button a, .wcpoa-table-main .wcpoa-pro-operations .button', function(){
             $('body').addClass('wcpoa-modal-visible');
         });
 
-        $(document).on('click', '#dotsstoremain .modal-close-btn', function(){
+        $(document).on('click', '.upgrade-to-pro-modal-main .modal-close-btn', function(){
             $('body').removeClass('wcpoa-modal-visible');
         });
+
+
+        /** Script for Freemius upgrade popup */
+        $(document).on('click', '.dots-header .dots-upgrade-btn, .dotstore-upgrade-dashboard .upgrade-now', function(e){
+            e.preventDefault();
+            upgradeToProFreemius( '' );
+        });
+        $(document).on('click', '.upgrade-to-pro-modal-main .upgrade-now', function(e){
+            e.preventDefault();
+            $('body').removeClass('wcpoa-modal-visible');
+            let couponCode = $('.upgrade-to-pro-discount-code').val();
+            upgradeToProFreemius( couponCode );
+        });
+
+        premiumSelectShowPopup( '.wcpoa-bulk-attach-main .is_condition_select', 'yes' );
+        premiumSelectShowPopup( '.wcpoa_attach_type_list', 'external_ulr' );
+        premiumSelectShowPopup( '.wcpoa-field .enable_date_time', 'time_amount' );
+
+        // Script for Beacon configuration
+        var helpBeaconCookie = getCookie( 'wcpoa-help-beacon-hide' );
+        if ( ! helpBeaconCookie && 'yes' === wcpoa_vars.is_plugin_page ) {
+            Beacon('init', 'afe1c188-3c3b-4c5f-9dbd-87329301c920');
+            Beacon('config', {
+                display: {
+                    style: 'icon',
+                    iconImage: 'message',
+                }
+            });
+
+            // Add plugin articles IDs to display in beacon
+            Beacon('suggest', ['5fd06cb1388c5a0089e64e65', '5fcf7aa9471dc000c9affde3', '605b42a40ad05379b10d03ac', '5fcf7e05388c5a0089e649a2', '5fd062fe12909d16116e0130']);
+
+            // Add custom close icon form beacon
+            setTimeout(function() {
+                if ( $( '.hsds-beacon .BeaconFabButtonFrame' ).length > 0 ) {
+                    let newElement = document.createElement('span');
+                    newElement.classList.add('dashicons', 'dashicons-no-alt', 'dots-beacon-close');
+                    let container = document.getElementsByClassName('BeaconFabButtonFrame');
+                    container[0].appendChild( newElement );
+                }
+            }, 3000);
+
+            // Hide beacon
+            $(document).on('click', '.dots-beacon-close', function(){
+                Beacon('destroy');
+                setCookie( 'wcpoa-help-beacon-hide' , 'true', 24 * 60 );
+            });
+        }
     });
+    
+    /** Script for Freemius upgrade popup */
+    function upgradeToProFreemius( couponCode ) {
+        let handler;
+        handler = FS.Checkout.configure({
+            plugin_id: '3473',
+            plan_id: '5539',
+            public_key:'pk_9edf804dccd14eabfd00ff503acaf',
+            image: 'https://www.thedotstore.com/wp-content/uploads/sites/1417/2023/09/WooCommerce-Product-Attachment-Banner-1-New.png',
+            coupon: couponCode,
+        });
+        handler.open({
+            name: 'WooCommerce Product Attachment',
+            subtitle: 'WooCommerce Product Attachment',
+            licenses: jQuery('input[name="licence"]:checked').val(),
+            purchaseCompleted: function( response ) {                            
+                console.log (response);
+            },
+            success: function (response) {
+                console.log (response);
+            }
+        });
+    }
+
+    // Script for Display upgrade pro popup on select premium option
+    function premiumSelectShowPopup( option, value ) {
+        // Script for hide row on change
+        $(document).on('change', option, function(){
+            if( value === $(this).val() ) {
+                $(this).find(':selected').prop('selected', false);
+                $('body').addClass('wcpoa-modal-visible');
+            }
+        });
+    }
+
+    // Set cookies
+    function setCookie(name, value, minutes) {
+        var expires = '';
+        if (minutes) {
+            var date = new Date();
+            date.setTime(date.getTime() + (minutes * 60 * 1000));
+            expires = '; expires=' + date.toUTCString();
+        }
+        document.cookie = name + '=' + (value || '') + expires + '; path=/';
+    }
+
+    // Get cookies
+    function getCookie(name) {
+        let nameEQ = name + '=';
+        let ca = document.cookie.split(';');
+        for (let i = 0; i < ca.length; i++) {
+            let c = ca[i].trim();
+            if (c.indexOf(nameEQ) === 0) {
+                return c.substring(nameEQ.length, c.length);
+            }
+        }
+        return null;
+    }
+
+
     function customValidation(){
         jQuery('#post').submit(function(e){
             var isValid = true;

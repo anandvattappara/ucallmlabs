@@ -88,7 +88,6 @@ class Sitemap extends SitemapAbstract {
 		$this->query         = new Query();
 		$this->file          = new File();
 		$this->image         = new Image\Image();
-		$this->ping          = new Ping();
 		$this->priority      = new Priority();
 		$this->output        = new Output();
 		$this->helpers       = new Helpers();
@@ -389,7 +388,7 @@ class Sitemap extends SitemapAbstract {
 		}
 
 		require_once ABSPATH . 'wp-admin/includes/file.php';
-		if ( ! aioseo()->core->fs->exists( get_home_path() . $_SERVER['REQUEST_URI'] ) ) {
+		if ( isset( $_SERVER['REQUEST_URI'] ) && ! aioseo()->core->fs->exists( get_home_path() . sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) ) ) {
 			$this->scheduleRegeneration();
 		}
 	}

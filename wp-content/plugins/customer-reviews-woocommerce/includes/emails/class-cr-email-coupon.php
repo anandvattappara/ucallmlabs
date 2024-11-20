@@ -38,17 +38,7 @@ class CR_Email_Coupon {
 		$this->footer						= get_option( 'ivole_email_footer', '' );
 
 		// fetch language - either from the plugin's option or from WordPress standard locale
-		if ( 'yes' !== get_option( 'ivole_verified_reviews', 'no' ) ) {
-			$wp_locale = get_locale();
-			$wp_lang = explode( '_', $wp_locale );
-			if( is_array( $wp_lang ) && 0 < count( $wp_lang ) ) {
-				$this->language = strtoupper( $wp_lang[0] );
-			} else {
-				$this->language = 'EN';
-			}
-		} else {
-			$this->language = get_option( 'ivole_language', 'EN' );
-		}
+		$this->language = Ivole_Email::fetch_language();
 
 		$this->find['site-title'] = '{site_title}';
 		$this->find['customer-first-name']  = '{customer_first_name}';
@@ -176,7 +166,6 @@ class CR_Email_Coupon {
 		$message = $this->replace_variables( $message );
 
 		$data = array(
-			'token' => '164592f60fbf658711d47b2f55a1bbba',
 			'shop' => array( "name" => Ivole_Email::get_blogname(),
 				'domain' => Ivole_Email::get_blogurl() ),
 			'email' => array( 'to' => $to,
@@ -192,15 +181,7 @@ class CR_Email_Coupon {
 			'order' => array( 'id' => '12345',
 				'date' => date_i18n( 'd.m.Y', time() ),
 				'currency' => get_woocommerce_currency(),
-				'items' => array( array( 'id' => 1,
-						'name' => __( 'Item 1 Test', 'customer-reviews-woocommerce' ),
-						'price' => 15,
-						'image' => ''),
-					array( 'id' => 2,
-						'name' => __( 'Item 2 Test', 'customer-reviews-woocommerce' ),
-						'price' => 150,
-						'image' => '')
-					)
+				'items' => CR_Email_Func::get_test_items()
 				),
 				'colors' => array(
 					'email' => array(
@@ -237,7 +218,7 @@ class CR_Email_Coupon {
 	public function generate_coupon( $to, $review_id, $coupon ) {
 		$prefix = $coupon['cr_coupon_prefix'];
 		$unique_code = ( !empty( $to ) ) ? strtoupper( uniqid( substr( preg_replace( '/[^a-z0-9]/i', '', sanitize_title( $to ) ), 0, 5 ) ) ) : strtoupper( uniqid() );
-		$unique_code = strtoupper( $prefix ) . $unique_code;
+		$unique_code = apply_filters( 'cr_generate_coupon', strtoupper( $prefix ) . $unique_code, $review_id );
 		$coupon_args = array(
 			'post_title' 	=> $unique_code,
 			'post_content' 	=> '',

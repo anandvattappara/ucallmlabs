@@ -28,16 +28,33 @@ if ( 'icon' === get_option( 'afrfq_basket_option' ) ) : ?>
 			<span id="total-items-count" class="totalitems"> <?php echo esc_attr( $quote_item_count ); ?> </span>
 		</a>
 	</li>
+	<!--<li id="quote-li-icon" class="quote-li">
+		<a class="afrq-menu-item" href="<?php echo esc_url( $pageurl ); ?>" title="<?php echo esc_html__( 'View Quote', 'addify_rfq' ); ?>">
+			<span class="ic-cart-quote"></span>
+			<span id="total-items-count" class="totalitems"> <?php echo esc_attr( $quote_item_count ); ?> </span>
+		</a>
+	</li>-->
 <?php endif; ?>
 
 <?php if ( 'dropdown' === get_option( 'afrfq_basket_option' ) ) : ?>
 
 	<li id="quote-li" class="quote-li">
-		<a class="afrq-menu-item" href="<?php echo esc_url( $pageurl ); ?>" title="<?php echo esc_html__( 'View Quote', 'addify_rfq' ); ?>">
+		<!--<a class="afrq-menu-item" href="<?php echo esc_url( $pageurl ); ?>" title="<?php echo esc_html__( 'View Quote', 'addify_rfq' ); ?>">
 			<span class="dashicons dashicons-cart dashiconsc"></span>
 			<span id="total-items" class="totalitems">
 				<?php echo esc_attr( $quote_item_count ) . esc_html__( ' items in quote', 'addify_rfq' ); ?>
 			</span>
+		</a>-->
+		
+		<a class="afrq-menu-item" href="<?php echo esc_url( $pageurl ); ?>" title="<?php echo esc_html__( 'View Quote', 'addify_rfq' ); ?>">
+			<span class="ic-cart-quote"></span>
+			<span class="cart-quote-number"><?php echo esc_attr( $quote_item_count ); ?></span>
+			<span class="cart-quote-total"><span class="label">My Quote</span></span>
+			
+			
+			<!--<span id="total-items" class="totalitems">
+				<?php echo esc_attr( $quote_item_count ) . esc_html__( ' items in quote', 'addify_rfq' ); ?>
+			</span>-->
 		</a>
 		<?php
 		wc_get_template(

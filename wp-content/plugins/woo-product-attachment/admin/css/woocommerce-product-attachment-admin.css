@@ -1,5 +1,11 @@
+:root{
+    --dotstore-primary:#27AE60;
+    --dotstore-remove:#EF0000;
+}
+
 .wcpoa-fields > .wcpoa-field:first-child{border-top-width:0;}
 .wcpoa-field .wcpoa-label{vertical-align:top;margin:20px 0 35px 0;}
+.wcpoa-single-prod-attach > .wcpoa-label{margin-bottom:20px}
 .select2{width:70%!important;}
 .select2:focus{border-color:#007cba;-webkit-box-shadow:0 0 0 1px #007cba;box-shadow:0 0 0 1px #007cba;outline:2px solid transparent;}
 .select2-container--default.select2-container--focus .select2-selection--multiple{border:solid #007cba 1px;}
@@ -126,7 +132,7 @@ a.wcpoa-icon.-minus:hover,a.wcpoa-icon.-cancel:hover{background-color:#F55E4F;}
 .wcpoa-file-uploader .file-wrap{border:#DFDFDF solid 1px;min-height:84px;position:relative;background:#fff;}
 .wcpoa-file-uploader .file-icon{position:absolute;top:0;left:0;bottom:0;padding:10px;border-right:#E5E5E5 solid 1px;}
 .wcpoa-field-id{display:none!important;}
-.wcpoa-description-tooltip-icon{background-image:url("../images/help.png");background-size:16px auto;display:inline-block;height:17px!important;margin-left:10px;vertical-align:middle;width:16px!important;cursor:pointer;}
+.wcpoa-description-tooltip-icon{background-image:url("../images/help.png");background-size:16px auto;display:inline-block;height:17px!important;margin-left:4px;vertical-align:middle;width:16px!important;cursor:pointer;}
 .wcpoa-description{display:none;font-style:italic;}
 .wcpoa-file-uploader .file-info{padding:10px;margin-left:69px;}
 .wcpoa-file-uploader .file-icon img{display:block;padding:0;margin:0;max-width:36px;}
@@ -181,9 +187,16 @@ Tootltip
 .wcpoa-tooltip.-confirm a{text-decoration:none;color:#9ea3a8;}
 li#toplevel_page_woocommerce_product_attachment_pro{display:none;}
 .wcpoa-bulk-attach-left{-webkit-box-shadow:0 0 10px rgb(0 0 0 / 8%);box-shadow:0 0 10px rgb(0 0 0 / 8%);margin-bottom:35px;}
-.wcpoa-bulk-attach-left .wcpoa-field-repeater{padding:20px;background:#fff;}
+.wcpoa-bulk-attach-left .wcpoa-field-repeater{padding:25px 30px;background:#fff;}
 .wcpoa-bulk-attach-left .wcpoa-field-repeater .wcpoa-actions #publishing-action{text-align:left;float:none;}
 .wcpoa-bulk-attach-left .wcpoa-field-repeater .wcpoa-actions .wcpoa-add-bulk-attach{float:right;}
+.wcpoa-bulk-attach-left .wcpoa-bulk-att-desc{margin: 0 0 24px;}
+.wcpoa-bulk-attach-left .wcpoa-bulk-att-desc p:not(p.wcpoa-description), .wcpoa-bulk-attach-left .wcpoa-bulk-att-desc div{margin:0;font-size:14px;line-height:22px;}
+.wcpoa-bulk-attach-left .wcpoa-pro-operations{margin-bottom:15px;display:inline-block;width:100%;}
+.wcpoa-bulk-attach-left .wcpoa-pro-operations a{padding:3px 10px 4.5px;}
+.bulk-product-attachment-wrap .wcpoa-oprations .wcpoa-general-input-value{margin-top:24px;}
+.bulk-product-attachment-wrap .wcpoa-description-tooltip-icon{margin-left:2px;margin-bottom:-2px;}
+.bulk-product-attachment-wrap .wcpoa-oprations .wcpoa-general-input-value p
 .wcpoa-in-pro-button .button-primary{background:#f9f9f9;border-color:#ccd0d4;color:#b3b6b9;text-decoration:none;text-shadow:none;}
 .wcpoa-in-pro-button .button-primary:hover{background:#f9f9f9;border-color:#ccd0d4;color:#b3b6b9;text-decoration:none;text-shadow:none;}
 .wcpoa-notice{margin:10px 20px 0 0;}
@@ -193,11 +206,55 @@ li#toplevel_page_woocommerce_product_attachment_pro{display:none;}
 .wcpoa_image_text_wrap img{width:20%;display:inline-block;}
 .wcpoa_image_text_wrap h4{display:inline-block;vertical-align:top;margin:10px;width:70%;}
 a.wcpoa_attachmentbtn{padding:0;background:none;color:#2271b1;}
-.bulk-product-attachment-wrap{display:block;background:#ececec;padding:20px;}
+.bulk-product-attachment-wrap{display:block;background:#fff;padding:25px 30px;}
 .bulk-product-attachment-wrap h3{margin:0;}
+.bulk-product-attachment-wrap input[type="file"]::-webkit-file-upload-button{color:var(--dotstore-primary);padding:8px;border:1px solid var(--dotstore-primary);border-radius:5px;margin-right:8px;background-color:transparent;}
+.bulk-product-attachment-wrap input[type="file"]::file-selector-button{color:var(--dotstore-primary);padding:8px;border:1px solid var(--dotstore-primary);border-radius:5px;margin-right:8px;background-color:transparent;}
+.bulk-product-attachment-wrap .wcpoa-oprations{margin-top:25px;}
 span.responce_message{padding:10px;display:block;margin-bottom:10px;color:#fff;}
 span.responce_message.error{background:#e43939;}
 span.responce_message.success{background:rgb(0,126,0);}
 
 /* Bulk Attachment CSS */
 .wcpoa-bulk-attach-left #wcpoa-bulk-product-import{vertical-align:middle;display:inline-block;}
+
+/* upgrade to pro modal css */
+@-webkit-keyframes wcpoaModalEffect{
+    0%{top:-8%;}
+    100%{top:0;}
+}
+@keyframes wcpoaModalEffect{
+    0%{top:-8%;}
+    100%{top:0;}
+}
+.upgrade-to-pro-modal-main, .upgrade-to-pro-modal-main *{box-sizing:border-box;}
+body.wcpoa-modal-visible{overflow:hidden;}
+.upgrade-to-pro-modal-main{display:inline-block;width:100%;visibility:hidden;opacity:0;position:fixed;z-index:99999;top:0;left:0;height:100%;background:hsla(0,0%,0%,0.5);overflow:auto;padding:90px 20px 50px;}
+.wcpoa-modal-visible .upgrade-to-pro-modal-main{visibility:visible;opacity:1;}
+.upgrade-to-pro-modal-main .upgrade-to-pro-modal-outer{width:100%;height:100%;display:table;}
+.upgrade-to-pro-modal-main .pro-modal-inner{display:table-cell;vertical-align:middle;}
+.upgrade-to-pro-modal-main .pro-modal-wrapper{z-index:99999;width:100%;background-color:#fff;max-width:550px;margin:0 auto;border-radius:15px;padding:191px 30px 30px;visibility:hidden;opacity:0;position:relative;-webkit-transition:all ease-in-out 0.3s;-o-transition:all ease-in-out 0.3s;transition:all ease-in-out 0.3s;}
+.wcpoa-modal-visible .upgrade-to-pro-modal-main .pro-modal-wrapper{visibility:visible;opacity:1;-webkit-animation-name:wcpoaModalEffect;animation-name:wcpoaModalEffect;-webkit-animation-duration:0.3s;animation-duration:0.3s;}
+.upgrade-to-pro-modal-main .pro-modal-header{position:relative;}
+.upgrade-to-pro-modal-main .pro-modal-header img{width:calc(100% + 62px);height:auto;max-width:calc(100% + 62px);position:absolute;top:-242px;left:-31px;}
+.upgrade-to-pro-modal-main .modal-close-btn{position:absolute;top:-184px;right:-22px;cursor:pointer;font-size:22px;line-height:16px;padding:7px 0;width:30px;height:30px;color:#fff;background-color:transparent;border-radius:50%;-webkit-transition:all .3s linear;-o-transition:all .3s linear;transition:all .3s linear;}
+.upgrade-to-pro-modal-main .modal-close-btn:hover{background-color:#229c56;}
+.upgrade-to-pro-modal-main .pro-modal-header p{margin:0;font-size:17px;font-weight:500;color:#3c434a;}
+#dotsstoremain .upgrade-to-pro-modal-main .wcpoa-pro-label{margin:0 7px 0 0;}
+.upgrade-to-pro-modal-main .pro-modal-body p{font-size:16px;line-height:24px;margin:0 0 14px 0;color:#000;}
+.upgrade-to-pro-modal-main .pro-modal-body .pro-feature-title{margin:0 0 20px;font-size:20px;line-height:normal;font-weight:700;}
+.upgrade-to-pro-modal-main .pro-modal-footer{text-align:center;margin:32px 0 0;}
+.upgrade-to-pro-modal-main .pro-feature-trial-btn{padding:13px 24px;line-height:1.5;color:#fff;border-radius:10px;text-decoration:none;background-color:var(--dotstore-primary);border:2px solid var(--dotstore-primary);font-size:16px;font-weight:400;white-space:normal;cursor:pointer;display:inline-block;-webkit-transition:all .3s linear;-o-transition:all .3s linear;transition:all .3s linear}
+.upgrade-to-pro-modal-main .pro-feature-trial-btn:hover{color:var(--dotstore-primary);background-color:transparent;}
+.upgrade-to-pro-modal-main .pro-feature-list{margin:22px 0 0 10px;}
+.upgrade-to-pro-modal-main .pro-feature-list li{font-size:15px;line-height:22px;color:#000;padding:0 0 12px 20px;position:relative;margin:0;}
+.upgrade-to-pro-modal-main .pro-feature-list li::before{content:'';background-color:var(--dotstore-primary);display:inline-block;font-size:0px;width:10px;margin-left:0em;position:absolute;left:0px;top:7px;height:10px;border-radius:50%;}
+.upgrade-to-pro-modal-main .pro-feature-list li:last-child{padding-bottom:0}
+
+/* Media css */
+@media screen and (max-width:639px){
+    .upgrade-to-pro-modal-main .pro-modal-wrapper{padding:25px;}
+    .upgrade-to-pro-modal-main .pro-modal-header img{display:none;}
+    .upgrade-to-pro-modal-main .modal-close-btn{top:-22px;font-size:20px;line-height:13px;padding:7px 0;width:26px;height:26px;color:#000}
+    .upgrade-to-pro-modal-main .modal-close-btn:hover{color:#fff}
+}

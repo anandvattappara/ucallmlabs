@@ -140,9 +140,9 @@ a.wcpoa_attachmentbtn_order{padding:10px;background:#0e7aad;color:#fff;}
 .wcpoa-table-main .wcpoa-general-content .wcpoa-general-content-heading h3{color:#000000c4;padding:15px 20px;margin:0;text-transform:uppercase;font-weight:500;}
 .wcpoa-top-desc{list-style:inside;}
 .wcpoa-table-main .wcpoa-general-content .wcpoa-general-input,.wcpoa-table-main .wcpoa-general-content .wcpoa-general-submit{width:100%;display:table;}
-.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-title{width:24%;vertical-align:middle;display:table-cell;padding:20px 30px;font-size:13px;font-weight:500;color:#000;}
-.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value{width:76%;vertical-align:middle;display:table-cell;padding:20px 30px;position:relative;}
-.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value input[type=text],.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value select{width:65%;max-width:65%;}
+.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-title{width:25%;vertical-align:middle;display:table-cell;padding:20px 30px;font-size:13px;font-weight:500;color:#000;}
+.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value{width:75%;vertical-align:middle;display:table-cell;padding:20px 30px;position:relative;}
+.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value input[type=text],.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value select,.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value textarea{width:60%;max-width:520px!important;}
 .wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value .wcpoa-name-radio-box input[type=radio]:nth-child(1){margin-left:0px;}
 .wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value .wcpoa-name-radio-box input[type=radio]{margin: 0 1px 0 15px;}
 .wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value .wcpoa-user-role-base-attach{width:70%;max-width:70%;}
@@ -170,10 +170,11 @@ span.remove_image_icon:hover{cursor:pointer;}
 
 /** Documentation link CSS */
 .product_attachment_help{width:100%;text-align:right;}
-.product_attachment_help a{text-decoration:none;}
-.product_attachment_help .dashicons-info-outline{color:var(--dotstore-primary);width:16px;height:16px;font-size:16px;line-height:19px;}
-.wcpoa-name-radio-box .product_attachment_help{margin-top:-20px;}
-.text-title .product_attachment_help{width:auto;text-align:right;float:right;margin-top:5px;}
+body .product_attachment_help a{text-decoration:none;color:#000;font-size:0;position:relative;width:26px;height:28px;display:inline-block;}
+body .product_attachment_help a::before{content:"";position:absolute;left:0;top:0;display:inline-block;width:26px;height:28px;background-image:url("../images/help-doc.svg");background-repeat:no-repeat;background-size:contain;}
+.product_attachment_help .dashicons-info-outline{color:#000;width:16px;height:16px;font-size:16px;line-height:19px;}
+.wcpoa-name-radio-box .product_attachment_help{margin-top:-32px;}
+.text-title .product_attachment_help{width:auto;text-align:right;float:right;margin-top:0;}
 /** Documentation link CSS over */
 
 #dotsstoremain .all-pad .dots-settings-inner-main{display:-webkit-box;display:-ms-flexbox;display:flex;width:100%;position:relative;-ms-flex-wrap:nowrap;flex-wrap:nowrap;}
@@ -240,7 +241,7 @@ span.remove_image_icon:hover{cursor:pointer;}
     #dotsstoremain .wcpoa-table-main table.wcpoa-tableouter tbody tr p.submit input#submit{margin-top:-20px;}
     .dots-plugin-details .dots-header-left .plugin-name .title{font-size:30px;}
     .dots-logo-main img{width:80px;}
-    .wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value input[type=text],.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value select,.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value .wcpoa-user-role-base-attach{width:88%;max-width:88%;}
+    .wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value input[type=text],.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value select,.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value textarea,.wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value .wcpoa-user-role-base-attach{width:88%;max-width:88%!important;}
     .wcpoa-table-main .wcpoa-general-content .wcpoa-general-input .wcpoa-general-input-value .wcpoa-user-role-base-attach ul li{width:100%;float:left;}
 }
 @media only screen and (max-width: 550px){

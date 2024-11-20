@@ -76,6 +76,7 @@ trait Vue {
 		$this->setSeoRevisionsData();
 		$this->setToolsOrSettingsData();
 		$this->setPageBuilderData();
+		$this->setWritingAssistantData();
 
 		$this->cache[ $hash ] = $this->data;
 
@@ -167,36 +168,43 @@ trait Vue {
 			'backups'           => [],
 			'importers'         => [],
 			'data'              => [
-				'server'              => aioseo()->helpers->getServerName(),
-				'robots'              => [
+				'server'                => aioseo()->helpers->getServerName(),
+				'robots'                => [
 					'defaultRules'      => [],
 					'hasPhysicalRobots' => null,
 					'rewriteExists'     => null,
 					'sitemapUrls'       => []
 				],
-				'logSizes'            => [
+				'logSizes'              => [
 					'badBotBlockerLog' => null
 				],
-				'status'              => [],
-				'htaccess'            => '',
-				'isMultisite'         => is_multisite(),
-				'isNetworkAdmin'      => is_network_admin(),
-				'currentBlogId'       => get_current_blog_id(),
-				'mainSite'            => is_main_site(),
-				'subdomain'           => $this->isSubdomain(),
-				'isWooCommerceActive' => $this->isWooCommerceActive(),
-				'isBBPressActive'     => class_exists( 'bbPress' ),
-				'staticHomePage'      => $isStaticHomePage ? $staticHomePage : false,
-				'staticBlogPage'      => $this->getBlogPageId(),
-				'staticBlogPageTitle' => get_the_title( $this->getBlogPageId() ),
-				'isDev'               => $this->isDev(),
-				'isLocal'             => $this->isLocalUrl( site_url() ),
-				'isSsl'               => is_ssl(),
-				'hasUrlTrailingSlash' => '/' === user_trailingslashit( '' ),
-				'permalinkStructure'  => get_option( 'permalink_structure' ),
-				'dateFormat'          => get_option( 'date_format' ),
-				'timeFormat'          => get_option( 'time_format' ),
-				'siteName'            => aioseo()->helpers->getWebsiteName()
+				'status'                => [],
+				'htaccess'              => '',
+				'isMultisite'           => is_multisite(),
+				'isNetworkAdmin'        => is_network_admin(),
+				'currentBlogId'         => get_current_blog_id(),
+				'mainSite'              => is_main_site(),
+				'subdomain'             => $this->isSubdomain(),
+				'isBBPressActive'       => class_exists( 'bbPress' ),
+				'isClassicEditorActive' => $this->isClassicEditorActive(),
+				'isWooCommerceActive'   => $this->isWooCommerceActive(),
+				'staticHomePage'        => $isStaticHomePage ? $staticHomePage : false,
+				'staticBlogPage'        => $this->getBlogPageId(),
+				'staticBlogPageTitle'   => get_the_title( $this->getBlogPageId() ),
+				'isDev'                 => $this->isDev(),
+				'isLocal'               => $this->isLocalUrl( site_url() ),
+				'isSsl'                 => is_ssl(),
+				'hasUrlTrailingSlash'   => '/' === user_trailingslashit( '' ),
+				'permalinkStructure'    => get_option( 'permalink_structure' ),
+				'dateFormat'            => get_option( 'date_format' ),
+				'timeFormat'            => get_option( 'time_format' ),
+				'siteName'              => aioseo()->helpers->getWebsiteName(),
+				'adminEmail'            => get_bloginfo( 'admin_email' ),
+				'blocks'                => [
+					'toc' => [
+						'hashPrefix' => apply_filters( 'aioseo_toc_hash_prefix', 'aioseo-' )
+					]
+				]
 			],
 			'user'              => [
 				'canManage'      => aioseo()->access->canManage(),
@@ -270,7 +278,7 @@ trait Vue {
 			'context'                        => 'post',
 			'tags'                           => aioseo()->tags->getDefaultPostTags( $postId ),
 			'id'                             => $postId,
-			'priority'                       => isset( $post->priority ) && 'default' !== $post->priority ? $post->priority : 'default',
+			'priority'                       => isset( $post->priority ) && null !== $post->priority ? (float) $post->priority : 'default',
 			'frequency'                      => ! empty( $post->frequency ) ? $post->frequency : 'default',
 			'permalink'                      => get_permalink( $postId ),
 			'editlink'                       => aioseo()->helpers->getPostEditLink( $postId ),
@@ -289,7 +297,7 @@ trait Vue {
 			'postStatus'                     => get_post_status( $postId ),
 			'postAuthor'                     => (int) $wpPost->post_author,
 			'isSpecialPage'                  => $this->isSpecialPage( $postId ),
-			'isPageAnalysisEligible'         => $this->isPageAnalysisEligible( $postId ),
+			'isTruSeoEligible'               => $this->isTruSeoEligible( $postId ),
 			'isStaticPostsPage'              => aioseo()->helpers->isStaticPostsPage(),
 			'isHomePage'                     => $postId === $staticHomePage,
 			'isWooCommercePageWithoutSchema' => $this->isWooCommercePageWithoutSchema( $postId ),
@@ -384,12 +392,20 @@ trait Vue {
 	 * @return void
 	 */
 	private function setSearchStatisticsData() {
-		if ( 'search-statistics' !== $this->args['page'] ) {
-			return;
+		$this->data['searchStatistics'] = [
+			'isConnected'        => aioseo()->searchStatistics->api->auth->isConnected(),
+			'sitemapsWithErrors' => aioseo()->searchStatistics->sitemap->getSitemapsWithErrors(),
+		];
+
+		if ( 'post' === $this->args['page'] ) {
+			$this->data['keywordRankTracker'] = aioseo()->searchStatistics->keywordRankTracker->getVueDataEdit();
 		}
 
-		$this->data['seoOverview']      = aioseo()->postSettings->getPostTypesOverview();
-		$this->data['searchStatistics'] = aioseo()->searchStatistics->getVueData();
+		if ( 'search-statistics' === $this->args['page'] ) {
+			$this->data['seoOverview']        = aioseo()->postSettings->getPostTypesOverview();
+			$this->data['searchStatistics']   = array_merge( $this->data['searchStatistics'], aioseo()->searchStatistics->getVueData() );
+			$this->data['keywordRankTracker'] = aioseo()->searchStatistics->keywordRankTracker->getVueData();
+		}
 	}
 
 	/**
@@ -403,6 +419,8 @@ trait Vue {
 		if ( 'sitemaps' !== $this->args['page'] ) {
 			return;
 		}
+
+		$this->data['data']['sitemapUrls'] = aioseo()->sitemap->helpers->getSitemapUrls();
 
 		try {
 			if ( as_next_scheduled_action( 'aioseo_static_sitemap_regeneration' ) ) {
@@ -520,7 +538,7 @@ trait Vue {
 				'defaultRules'      => $this->args['page'] ? aioseo()->robotsTxt->extractRules( aioseo()->robotsTxt->getDefaultRobotsTxtContent() ) : [],
 				'hasPhysicalRobots' => aioseo()->robotsTxt->hasPhysicalRobotsTxt(),
 				'rewriteExists'     => aioseo()->robotsTxt->rewriteRulesExist(),
-				'sitemapUrls'       => array_merge( aioseo()->sitemap->helpers->getSitemapUrls(), aioseo()->sitemap->helpers->extractSitemapUrlsFromRobotsTxt() )
+				'sitemapUrls'       => array_merge( aioseo()->sitemap->helpers->getSitemapUrlsPrefixed(), aioseo()->sitemap->helpers->extractSitemapUrlsFromRobotsTxt() )
 			];
 			$this->data['data']['logSizes']       = [
 				'badBotBlockerLog' => $this->convertFileSize( aioseo()->badBotBlocker->getLogSize() )
@@ -610,6 +628,25 @@ trait Vue {
 		}
 
 		return $locale;
+	}
+
+	/**
+	 * Set Vue writing assistant data.
+	 *
+	 * @since 4.7.4
+	 *
+	 * @return void
+	 */
+	private function setWritingAssistantData() {
+		// Settings page or not a post screen.
+		if (
+			'settings' !== $this->args['page'] &&
+			! aioseo()->helpers->isScreenBase( 'post' )
+		) {
+			return;
+		}
+
+		$this->data['writingAssistantSettings'] = aioseo()->writingAssistant->helpers->getSettingsVueData();
 	}
 
 	/**

@@ -36,7 +36,13 @@ class Api {
 			'post'                                        => [ 'callback' => [ 'PostsTerms', 'getPostData' ], 'access' => 'everyone' ],
 			'post/(?P<postId>[\d]+)/first-attached-image' => [ 'callback' => [ 'PostsTerms', 'getFirstAttachedImage' ], 'access' => 'aioseo_page_social_settings' ],
 			'user/(?P<userId>[\d]+)/image'                => [ 'callback' => [ 'User', 'getUserImage' ], 'access' => 'aioseo_page_social_settings' ],
-			'tags'                                        => [ 'callback' => [ 'Tags', 'getTags' ], 'access' => 'everyone' ]
+			'tags'                                        => [ 'callback' => [ 'Tags', 'getTags' ], 'access' => 'everyone' ],
+			'search-statistics/url/auth'                  => [ 'callback' => [ 'SearchStatistics', 'getAuthUrl' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings', 'aioseo_setup_wizard' ] ], // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+			'search-statistics/url/reauth'                => [ 'callback' => [ 'SearchStatistics', 'getReauthUrl' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ],
+			'writing-assistant/keyword/(?P<postId>[\d]+)' => [ 'callback' => [ 'WritingAssistant', 'getPostKeyword' ], 'access' => 'aioseo_page_writing_assistant_settings' ],
+			'writing-assistant/user-info'                 => [ 'callback' => [ 'WritingAssistant', 'getUserInfo' ], 'access' => 'aioseo_page_writing_assistant_settings' ],
+			'writing-assistant/user-options'              => [ 'callback' => [ 'WritingAssistant', 'getUserOptions' ], 'access' => 'aioseo_page_writing_assistant_settings' ],
+			'writing-assistant/report-history'            => [ 'callback' => [ 'WritingAssistant', 'getReportHistory' ], 'access' => 'aioseo_page_writing_assistant_settings' ]
 		],
 		'POST'   => [
 			'htaccess'                                              => [ 'callback' => [ 'Tools', 'saveHtaccess' ], 'access' => 'aioseo_tools_settings' ],
@@ -90,7 +96,10 @@ class Api {
 			'plugins/install'                                       => [ 'callback' => [ 'Plugins', 'installPlugins' ], 'access' => [ 'install_plugins', 'aioseo_feature_manager_settings' ] ],
 			'plugins/upgrade'                                       => [ 'callback' => [ 'Plugins', 'upgradePlugins' ], 'access' => [ 'update_plugins', 'aioseo_feature_manager_settings' ] ],
 			'reset-settings'                                        => [ 'callback' => [ 'Settings', 'resetSettings' ], 'access' => 'aioseo_tools_settings' ],
+			'search-statistics/sitemap/delete'                      => [ 'callback' => [ 'SearchStatistics', 'deleteSitemap' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ], // phpcs:ignore Generic.Files.LineLength.MaxExceeded
+			'search-statistics/sitemap/ignore'                      => [ 'callback' => [ 'SearchStatistics', 'ignoreSitemap' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ], // phpcs:ignore Generic.Files.LineLength.MaxExceeded
 			'settings/export'                                       => [ 'callback' => [ 'Settings', 'exportSettings' ], 'access' => 'aioseo_tools_settings' ],
+			'settings/export-content'                               => [ 'callback' => [ 'Settings', 'exportContent' ], 'access' => 'aioseo_tools_settings' ],
 			'settings/hide-setup-wizard'                            => [ 'callback' => [ 'Settings', 'hideSetupWizard' ], 'access' => 'any' ],
 			'settings/hide-upgrade-bar'                             => [ 'callback' => [ 'Settings', 'hideUpgradeBar' ], 'access' => 'any' ],
 			'settings/import'                                       => [ 'callback' => [ 'Settings', 'importSettings' ], 'access' => 'aioseo_tools_settings' ],
@@ -100,6 +109,7 @@ class Api {
 			'settings/toggle-radio'                                 => [ 'callback' => [ 'Settings', 'toggleRadio' ], 'access' => 'any' ],
 			'settings/dismiss-alert'                                => [ 'callback' => [ 'Settings', 'dismissAlert' ], 'access' => 'any' ],
 			'settings/items-per-page'                               => [ 'callback' => [ 'Settings', 'changeItemsPerPage' ], 'access' => 'any' ],
+			'settings/semrush-country'                              => [ 'callback' => [ 'Settings', 'changeSemrushCountry' ], 'access' => 'any' ],
 			'settings/do-task'                                      => [ 'callback' => [ 'Settings', 'doTask' ], 'access' => 'aioseo_tools_settings' ],
 			'sitemap/deactivate-conflicting-plugins'                => [ 'callback' => [ 'Sitemaps', 'deactivateConflictingPlugins' ], 'access' => 'any' ],
 			'sitemap/delete-static-files'                           => [ 'callback' => [ 'Sitemaps', 'deleteStaticFiles' ], 'access' => 'aioseo_sitemap_settings' ],
@@ -125,29 +135,54 @@ class Api {
 			],
 			'crawl-cleanup'                                         => [
 				'callback' => [ 'CrawlCleanup', 'fetchLogs', 'AIOSEO\\Plugin\\Common\\QueryArgs' ],
-				'access'   => [ 'aioseo_search_appearance_settings' ]
+				'access'   => 'aioseo_search_appearance_settings'
 			],
 			'crawl-cleanup/block'                                   => [
 				'callback' => [ 'CrawlCleanup', 'blockArg', 'AIOSEO\\Plugin\\Common\\QueryArgs' ],
-				'access'   => [ 'aioseo_search_appearance_settings' ]
+				'access'   => 'aioseo_search_appearance_settings'
 			],
 			'crawl-cleanup/delete-blocked'                          => [
 				'callback' => [ 'CrawlCleanup', 'deleteBlocked', 'AIOSEO\\Plugin\\Common\\QueryArgs' ],
-				'access'   => [ 'aioseo_search_appearance_settings' ]
+				'access'   => 'aioseo_search_appearance_settings'
 			],
 			'crawl-cleanup/delete-unblocked'                        => [
 				'callback' => [ 'CrawlCleanup', 'deleteLog', 'AIOSEO\\Plugin\\Common\\QueryArgs' ],
-				'access'   => [ 'aioseo_search_appearance_settings' ]
+				'access'   => 'aioseo_search_appearance_settings'
 			],
+			'email-summary/send'                                    => [
+				'callback' => [ 'EmailSummary', 'send' ],
+				'access'   => 'aioseo_page_advanced_settings'
+			],
+			'writing-assistant/process'                             => [
+				'callback' => [ 'WritingAssistant', 'processKeyword' ],
+				'access'   => 'aioseo_page_writing_assistant_settings'
+			],
+			'writing-assistant/content-analysis'                    => [
+				'callback' => [ 'WritingAssistant', 'getContentAnalysis' ],
+				'access'   => 'aioseo_page_writing_assistant_settings'
+			],
+			'writing-assistant/disconnect'                          => [
+				'callback' => [ 'WritingAssistant', 'disconnect' ],
+				'access'   => 'aioseo_page_writing_assistant_settings'
+			],
+			'writing-assistant/user-options'                        => [
+				'callback' => [ 'WritingAssistant', 'saveUserOptions' ],
+				'access'   => 'aioseo_page_writing_assistant_settings'
+			],
+			'writing-assistant/set-report-progress'                 => [
+				'callback' => [ 'WritingAssistant', 'setReportProgress' ],
+				'access'   => 'aioseo_page_writing_assistant_settings'
+			]
 		],
 		'DELETE' => [
-			'backup' => [ 'callback' => [ 'Tools', 'deleteBackup' ], 'access' => 'aioseo_tools_settings' ]
+			'backup'                 => [ 'callback' => [ 'Tools', 'deleteBackup' ], 'access' => 'aioseo_tools_settings' ],
+			'search-statistics/auth' => [ 'callback' => [ 'SearchStatistics', 'deleteAuth' ], 'access' => [ 'aioseo_search_statistics_settings', 'aioseo_general_settings' ] ]
 		]
 		// phpcs:enable WordPress.Arrays.ArrayDeclarationSpacing.AssociativeArrayFound
 	];
 
 	/**
-	 * Class contructor.
+	 * Class constructor.
 	 *
 	 * @since 4.0.0
 	 */

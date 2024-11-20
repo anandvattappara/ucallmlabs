@@ -31,14 +31,18 @@ class ProfilePage extends WebPage {
 	public function get() {
 		$data = parent::get();
 
+		$post   = aioseo()->helpers->getPost();
 		$author = get_queried_object();
-		if ( ! is_a( $author, 'WP_User' ) ) {
+		if (
+			! is_a( $author, 'WP_User' ) &&
+			( is_singular() && ! is_a( $post, 'WP_Post' ) )
+		) {
 			return [];
 		}
 
 		global $wp_query;
 		$articles = [];
-		$authorId = $author->ID;
+		$authorId = $author->ID ?? $post->post_author ?? 0;
 		foreach ( $wp_query->posts as $post ) {
 			if ( $post->post_author !== $authorId ) {
 				continue;
@@ -64,6 +68,19 @@ class ProfilePage extends WebPage {
 			'hasPart'     => $articles
 
 		] );
+
+		// Add BuddyPress specific data
+		if ( aioseo()->schema->helpers->checkBuddyPressPage() ) {
+			// Ensure 'mainEntity' exists and populate it with the correct details.
+			if ( ! isset( $data['mainEntity'] ) ) {
+				$data['mainEntity'] = [];
+			}
+			$data['mainEntity']['@type'] = 'Person';
+			$data['mainEntity']['name']  = get_the_title();
+			if ( function_exists( 'bp_get_displayed_user_link' ) && bp_get_displayed_user_link() ) {
+				$data['mainEntity']['url'] = bp_get_displayed_user_link();
+			}
+		}
 
 		return $data;
 	}

@@ -1,4 +1,5 @@
 <?php 
+add_post_type_support('page','excerpt');
 function ecomall_child_register_scripts(){
     $parent_style = 'ecomall-style';
 
@@ -14,7 +15,7 @@ add_filter( 'woocommerce_product_tabs', 'woo_custom_product_tabs' );
 function woo_custom_product_tabs( $tabs ) {
 	 unset( $tabs['reviews'] );
 	 unset( $tabs['additional_information'] );
-	  unset( $tabs['dimensions'] );
+	 unset( $tabs['dimensions'] );
 	 return $tabs;
 }
 
@@ -57,7 +58,7 @@ function remove_image_zoom_support() {
 }
 add_action( 'wp', 'remove_image_zoom_support', 100 );
 
-add_action('woocommerce_after_add_to_cart_button','vwave_additional_button');
+add_action('woocommerce_after_add_to_cart_button','vwave_additional_button',50);
 function vwave_additional_button() {
    	global $product;
 	$productid = $product->get_id();
@@ -99,7 +100,6 @@ echo 'jQuery( document ).ready(function() {
 echo '</script>';
 
 }
-
 
 
 /**
@@ -265,3 +265,223 @@ function productprice_ajax_action (){
 	
     wp_die();
 }
+
+//Filter WooCommerce Flexslider options - Add Navigation Arrows
+ 
+add_filter( 'woocommerce_single_product_carousel_options', 'sf_update_woo_flexslider_options' );
+/**
+* Filer WooCommerce Flexslider options - Add Navigation Arrows
+*/
+function sf_update_woo_flexslider_options( $options ) {
+ 
+    $options['directionNav'] = true;
+ 
+    return $options;
+}
+
+
+add_action( 'woocommerce_before_single_product', 'woocommerce_template_single_meta', 10 );
+do_action( 'woocommerce_product_meta_start' );
+do_action( 'woocommerce_product_meta_end' );
+add_action( 'woocommerce_before_single_product', 'woocommerce_template_single_title', 40 );
+
+function ls_remove_default_woo_product_title() {
+    remove_action('woocommerce_single_product_summary', 'woocommerce_template_single_title', 5 );
+}
+add_action( 'woocommerce_before_single_product', 'ls_remove_default_woo_product_title' );
+
+add_filter( 'woocommerce_product_tabs', 'woo_aproduct_tab_count',1000 );
+function woo_aproduct_tab_count( $tabs ) {	
+	$total = count($tabs);
+	if($total>0){
+		$per = 100/$total;
+		echo '<style>ul.wc-tabs li{width:'.$per.'%}</style>';
+	}
+	return $tabs;
+}
+
+function shop_script() { 
+global $product;
+if(isset($product)){
+$title = $product->get_title();
+?>
+    <script type="text/javascript">
+       jQuery(document).on('change', '.product form.variations_form .variations select', function(){
+		var data = jQuery(this).val();
+		var dataAttr = data.length ? jQuery(this).find('option[value="' + data + '"]').text() : '';
+	
+		var producttitle = "<?PHP echo $title;?>";
+		var seloptions = "";
+		jQuery(".product form.variations_form .variations select").each(function(){
+			var data = jQuery(this).val();
+			var dataAttr = data.length ? jQuery(this).find('option[value="' + data + '"]').text() : '';
+			if(jQuery.trim(dataAttr)!=""){
+				seloptions = seloptions + " - "+dataAttr ;
+			}
+		});
+		if(seloptions!=""){
+			jQuery(".product_title").html(producttitle+seloptions);
+		}
+	});
+    </script>
+	<?php
+  }
+}
+add_action( 'wp_footer', 'shop_script' );
+
+add_action( 'woocommerce_before_single_product', 'show_variation_sku_underneath_product_title' );
+function show_variation_sku_underneath_product_title() {
+
+    global $product;
+
+    if ( $product->is_type('variable') ) {
+        ?>
+        <script>
+        jQuery(document).ready(function($) {     
+            $('input.variation_id').change( function(){
+                if( '' != $('input.variation_id').val() ) {
+
+                    jQuery.ajax( {
+
+                        url: '<?php echo admin_url( 'admin-ajax.php'); ?>',
+                        type: 'post',
+                        data: { 
+                            action: 'get_variation_sku', 
+                            variation_id: $('input.variation_id').val()
+                        },
+                        success: function(data) {
+                           // $('h1.product_title').siblings('.variation-sku').remove();
+                            if(data.length > 0) {
+                               // $('h1.product_title').after('<p class="variation-sku">Selected Varient SKU: ' + data + '</p>');
+								jQuery("span.sku").html(data);
+                            }
+                        }
+                    });
+
+                }
+            });
+        });
+        </script>
+    <?php
+    }
+}
+    
+add_action('wp_ajax_get_variation_sku' , 'get_variation_sku');
+add_action('wp_ajax_nopriv_get_variation_sku','get_variation_sku');
+function get_variation_sku() {
+
+    $variation_id = intval( $_POST['variation_id'] );
+    $sku = '';
+
+    if ( $product = wc_get_product( $variation_id ) ) $sku = $product->get_sku();
+    echo $sku;
+
+    wp_die(); // this is required to terminate immediately and return a proper response
+}
+
+register_nav_menus( array(
+		'quote_request' => esc_html__( 'Quote Basket', 'ecomall' ),
+	) );
+
+if( !function_exists('ecomall_quote_basket_menu') ){
+	function ecomall_quote_basket_menu(){
+		if( has_nav_menu( 'quote_request' ) ){
+			//do_action('ecomall_before_top_header_menu');
+			wp_nav_menu( array( 'container' => 'nav', 'container_class' => 'quote_request-menu', 'theme_location' => 'quote_request', 'depth' => 1 ) );
+			//do_action('ecomall_after_top_header_menu');
+		}
+	}
+}
+
+add_action( 'admin_init', 'ucallm_remove_menu_pages' );
+
+function ucallm_remove_menu_pages() {
+
+    remove_menu_page( 'edit.php?post_type=ts_team' );
+    remove_menu_page( 'post-new.php?post_type=ts_team' );
+	
+	remove_menu_page( 'edit.php?post_type=ts_testimonial' );
+    remove_menu_page( 'post-new.php?post_type=ts_testimonial' );
+}
+
+
+
+/*Custom Post type start*/
+
+function cw_post_type_partners() {
+
+$supports = array(
+
+'title', // post title
+
+'editor', // post content
+
+'author', // post author
+
+'thumbnail', // featured images
+
+'excerpt', // post excerpt
+
+'custom-fields', // custom fields
+
+'comments', // post comments
+
+'revisions', // post revisions
+
+'post-formats', // post formats
+
+);
+
+$labels = array(
+
+'name' => _x('Partners', 'plural'),
+
+'singular_name' => _x('Partners', 'singular'),
+
+'menu_name' => _x('Partners', 'admin menu'),
+
+'name_admin_bar' => _x('Partners', 'admin bar'),
+
+'add_new' => _x('Add New', 'Add new'),
+
+'add_new_item' => __('Add New Partner'),
+
+'new_item' => __('New Partner'),
+
+'edit_item' => __('Edit Partners'),
+
+'view_item' => __('View Partners'),
+
+'all_items' => __('All Partners'),
+
+'search_items' => __('Search Partners'),
+
+'not_found' => __('No partners found.'),
+
+);
+
+$args = array(
+
+'supports' => $supports,
+
+'labels' => $labels,
+
+'public' => true,
+
+'query_var' => true,
+
+'rewrite' => array('slug' => 'partners'),
+
+'has_archive' => true,
+
+'hierarchical' => false,
+
+);
+
+register_post_type('partners', $args);
+
+}
+
+add_action('init', 'cw_post_type_partners');
+
+/*Custom Post type end*/

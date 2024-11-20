@@ -235,11 +235,11 @@ trait Wp {
 			'label'        => ucwords( $postTypeObject->label ),
 			'singular'     => ucwords( $postTypeObject->labels->singular_name ),
 			'icon'         => $postTypeObject->menu_icon,
-			'hasExcerpt'   => post_type_supports( $postTypeObject->name, 'excerpt' ),
 			'hasArchive'   => $postTypeObject->has_archive,
 			'hierarchical' => $postTypeObject->hierarchical,
 			'taxonomies'   => get_object_taxonomies( $name ),
-			'slug'         => isset( $postTypeObject->rewrite['slug'] ) ? $postTypeObject->rewrite['slug'] : $name
+			'slug'         => isset( $postTypeObject->rewrite['slug'] ) ? $postTypeObject->rewrite['slug'] : $name,
+			'supports'     => get_all_post_type_supports( $name )
 		];
 	}
 
@@ -329,10 +329,12 @@ trait Wp {
 		foreach ( $roles as $role ) {
 			$rolesWhere[] = '(um.meta_key = \'' . aioseo()->core->db->db->prefix . 'capabilities\' AND um.meta_value LIKE \'%\"' . $role . '\"%\')';
 		}
-		$usersTableName = aioseo()->core->db->db->users; // We get the table name from WPDB since multisites share the same table.
-		$dbUsers        = aioseo()->core->db->start( "$usersTableName as u", true )
+		// We get the table name from WPDB since multisites share the same table.
+		$usersTableName    = aioseo()->core->db->db->users;
+		$usermetaTableName = aioseo()->core->db->db->usermeta;
+		$dbUsers           = aioseo()->core->db->start( "$usersTableName as u", true )
 			->select( 'u.ID, u.display_name, u.user_nicename, u.user_email' )
-			->join( 'usermeta as um', 'u.ID = um.user_id' )
+			->join( "$usermetaTableName as um", 'u.ID = um.user_id', '', true )
 			->whereRaw( '(' . implode( ' OR ', $rolesWhere ) . ')' )
 			->orderBy( 'u.user_nicename' )
 			->run()
@@ -836,5 +838,83 @@ trait Wp {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Parses blocks for a given post.
+	 *
+	 * @since 4.6.8
+	 *
+	 * @param  \WP_Post|int $post          The post or post ID.
+	 * @param  bool         $flattenBlocks Whether to flatten the blocks.
+	 * @return array                       The parsed blocks.
+	 */
+	public function parseBlocks( $post, $flattenBlocks = true ) {
+		if ( ! is_a( $post, 'WP_Post' ) ) {
+			$post = aioseo()->helpers->getPost( $post );
+		}
+
+		static $parsedBlocks = [];
+		if ( isset( $parsedBlocks[ $post->ID ] ) ) {
+			return $parsedBlocks[ $post->ID ];
+		}
+
+		$parsedBlocks = parse_blocks( $post->post_content );
+
+		if ( $flattenBlocks ) {
+			$parsedBlocks = $this->flattenBlocks( $parsedBlocks );
+		}
+
+		$parsedBlocks[ $post->ID ] = $parsedBlocks;
+
+		return $parsedBlocks[ $post->ID ];
+	}
+
+	/**
+	 * Flattens the given blocks.
+	 *
+	 * @since 4.6.8
+	 *
+	 * @param  array $blocks The blocks.
+	 * @return array         The flattened blocks.
+	 */
+	public function flattenBlocks( $blocks ) {
+		$flattenedBlocks = [];
+
+		foreach ( $blocks as $block ) {
+			if ( ! empty( $block['innerBlocks'] ) ) {
+				// Flatten inner blocks first.
+				$innerBlocks = $this->flattenBlocks( $block['innerBlocks'] );
+				unset( $block['innerBlocks'] );
+
+				// Add the current block to the result.
+				$flattenedBlocks[] = $block;
+
+				// Add the flattened inner blocks to the result.
+				$flattenedBlocks = array_merge( $flattenedBlocks, $innerBlocks );
+			} else {
+				// If no inner blocks, just add the block to the result.
+				$flattenedBlocks[] = $block;
+			}
+		}
+
+		return $flattenedBlocks;
+	}
+
+	/**
+	 * Checks if the Classic eEditor is active and if the Block Editor is disabled in its settings.
+	 *
+	 * @since 4.7.3
+	 *
+	 * @return bool Whether the Classic Editor is active.
+	 */
+	public function isClassicEditorActive() {
+		include_once ABSPATH . 'wp-admin/includes/plugin.php';
+
+		if ( ! is_plugin_active( 'classic-editor/classic-editor.php' ) ) {
+			return false;
+		}
+
+		return 'classic' === get_option( 'classic-editor-replace' );
 	}
 }

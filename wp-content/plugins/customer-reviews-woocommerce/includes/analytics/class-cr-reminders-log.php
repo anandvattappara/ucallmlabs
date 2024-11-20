@@ -133,6 +133,9 @@ class CR_Reminders_Log {
 			if ( isset( $result[0] ) ) {
 				if ( 0 === $result[0] ) {
 					$status = 'sent';
+				} elseif ( 200 === $result[0] ) {
+					$status = 'canceled';
+					$reminder['errorDetails'] = $result[1];
 				} else {
 					$status = 'error';
 					$reminder['errorDetails'] = $result[1];
@@ -185,6 +188,9 @@ class CR_Reminders_Log {
 		}
 
 		switch ($status) {
+			case 'rmd_canceled':
+				$status = 'canceled';
+				break;
 			case 'rmd_error':
 				$status = 'error';
 				break;
@@ -356,6 +362,9 @@ class CR_Reminders_Log {
 			case 'frm_opened':
 				$description = __( 'Form Opened', 'customer-reviews-woocommerce' );
 				break;
+			case 'canceled':
+				$description = __( 'Canceled', 'customer-reviews-woocommerce' );
+				break;
 			default:
 				break;
 		}
@@ -404,7 +413,11 @@ class CR_Reminders_Log {
 			default:
 				break;
 		}
-		return $description;
+		return apply_filters(
+			'cr_reminders_log_type_desc',
+			$description,
+			$type
+		);
 	}
 
 }

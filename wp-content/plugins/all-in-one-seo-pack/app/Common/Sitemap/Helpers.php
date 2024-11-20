@@ -459,7 +459,8 @@ class Helpers {
 	/**
 	 * Returns the URLs of all active sitemaps.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.6.2 Removed the prefix from the list of URLs.
 	 *
 	 * @return array $urls The sitemap URLs.
 	 */
@@ -481,6 +482,19 @@ class Helpers {
 		if ( aioseo()->options->sitemap->rss->enable ) {
 			$urls[] = $this->getUrl( 'rss' );
 		}
+
+		return $urls;
+	}
+
+	/**
+	 * Returns the URLs of all active sitemaps with the 'Sitemap: ' prefix.
+	 *
+	 * @since 4.6.2
+	 *
+	 * @return array $urls The sitemap URLs.
+	 */
+	public function getSitemapUrlsPrefixed() {
+		$urls = $this->getSitemapUrls();
 
 		foreach ( $urls as &$url ) {
 			$url = 'Sitemap: ' . $url;
@@ -570,5 +584,31 @@ class Helpers {
 		$postTypes = [ 'post' ];
 
 		return apply_filters( 'aioseo_sitemap_author_post_types', $postTypes );
+	}
+
+	/**
+	 * Decode the Urls from Posts and Terms so they properly show in the Sitemap.
+	 *
+	 * @since 4.6.9
+	 *
+	 * @param  mixed $data   The data to decode.
+	 * @return array $result The converted data with decoded URLs.
+	 */
+	public function decodeSitemapEntries( $data ) {
+		$result = [];
+		// Decode Url to properly show Unicode Characters.
+		foreach ( $data as $item ) {
+			if ( isset( $item['loc'] ) ) {
+				$item['loc'] = aioseo()->helpers->decodeUrl( $item['loc'] );
+			}
+			// This is for the RSS Sitemap.
+			if ( isset( $item['guid'] ) ) {
+				$item['guid'] = aioseo()->helpers->decodeUrl( $item['guid'] );
+			}
+
+			$result[] = $item;
+		}
+
+		return $result;
 	}
 }

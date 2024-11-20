@@ -31,6 +31,21 @@ if ( ! class_exists( 'Redux_Helpers', false ) ) {
 		public static $array_units = array( '', '%', 'in', 'cm', 'mm', 'em', 'rem', 'ex', 'pt', 'pc', 'px', 'vh', 'vw', 'vmin', 'vmax', 'ch' );
 
 		/**
+		 * Is customizer loaded.
+		 *
+		 * @return bool
+		 */
+		public static function is_customizer_loaded(): bool {
+			global $wp_customize;
+
+			if ( isset( $wp_customize ) ) {
+				return true;
+			}
+
+			return false;
+		}
+
+		/**
 		 * Retrieve the section array from field ID.
 		 *
 		 * @param string $opt_name Panel opt_name.
@@ -463,16 +478,6 @@ if ( ! class_exists( 'Redux_Helpers', false ) ) {
 			// phpcs:ignore Squiz.PHP.CommentedOutCode
 			_deprecated_function( __CLASS__ . '::' . __FUNCTION__, 'Redux 4.0', 'Redux_Functions_Ex::wp_normalize_path( $path )' );
 			return Redux_Functions_Ex::wp_normalize_path( $path );
-		}
-
-		/**
-		 * Create unique hash.
-		 *
-		 * @return string
-		 */
-		public static function get_hash(): string {
-			$remote_addr = Redux_Core::$server['REMOTE_ADDR'] ?? '127.0.0.1';
-			return md5( network_site_url() . '-' . $remote_addr );
 		}
 
 		/**

@@ -13,6 +13,7 @@ if ( ! class_exists( 'CR_Email_Func' ) ) :
 
 		const TEMPLATE_REVIEW_REMINDER = 'email-review-reminder.php';
 		const TEMPLATE_REVIEW_DISCOUNT = 'email-review-discount.php';
+		const CR_MESSAGE_ID = 'X-CR-Message-ID';
 
 		public static function get_order_items2( $order, $currency ) {
 			// read options
@@ -61,25 +62,18 @@ if ( ! class_exists( 'CR_Email_Func' ) ) :
 				}
 				if ( apply_filters( 'woocommerce_order_item_visible', true, $item ) && $item['product_id'] ) {
 					// create WC_Product to use its function for getting name of the product
-					$prod_main_temp = new WC_Product( $item['product_id'] );
+					$prod_main_temp = wc_get_product( $item['product_id'] );
 					if( $item['variation_id'] ) {
 						$prod_temp = new WC_Product_Variation( $item['variation_id'] );
 					} else {
 						$prod_temp = new WC_Product( $item['product_id'] );
 					}
 					$image = wp_get_attachment_image_url( $prod_main_temp->get_image_id(), 'full', false );
-					if( !$image ) {
+					if ( ! $image ) {
 						$image = '';
 					}
 					$q_name = $prod_main_temp->get_title();
-					$price_per_item = floatval( $prod_temp->get_price() );
-					if( function_exists( 'wc_get_price_including_tax' ) ) {
-						if( $inc_tax ) {
-							$price_per_item = floatval( wc_get_price_including_tax( $prod_temp ) );
-						} else {
-							$price_per_item = floatval( wc_get_price_excluding_tax( $prod_temp ) );
-						}
-					}
+					$price_per_item = floatval( wc_get_price_to_display( $prod_temp ) );
 
 					// qTranslate integration
 					if ( function_exists( 'qtranxf_useCurrentLanguageIfNotFoundUseDefaultLanguage' ) ) {
@@ -135,7 +129,11 @@ if ( ! class_exists( 'CR_Email_Func' ) ) :
 					// a proactive check if the product belongs to prohibited categories
 					if ( 'cr' === $mailer ) {
 						$stop_words = array( 'kratom', 'cbd', 'cannabis', 'marijuana', 'kush' );
-						$name_lowercase = mb_strtolower( $q_name );
+						if ( function_exists( 'mb_strtolower' ) ) {
+							$name_lowercase = mb_strtolower( $q_name );
+						} else {
+							$name_lowercase = strtolower( $q_name );
+						}
 						$stop_word_found = false;
 						foreach ( $stop_words as $word ) {
 							if ( false !== strpos( $name_lowercase, $word ) ) {
@@ -390,6 +388,7 @@ if ( ! class_exists( 'CR_Email_Func' ) ) :
 							'is_test' => $is_test
 						)
 					);
+					$headers[] = self::CR_MESSAGE_ID . ': ' . $message['email_id'];
 					$data['email']['subject'] = apply_filters(
 						'cr_local_review_reminder_subject',
 						$data['email']['subject'],
@@ -407,9 +406,14 @@ if ( ! class_exists( 'CR_Email_Func' ) ) :
 							'details' => ''
 						);
 					} else {
+						$details = 'wp_mail function returned an error';
+						$wpmail_error = CR_WPMail_Log::get_error( $message['email_id'] );
+						if ( $wpmail_error ) {
+							$details = esc_html( $details . ' [' . $wpmail_error .']' );
+						}
 						$result = array(
 							'status' => 'Error',
-							'details' => 'wp_mail function returned an error'
+							'details' => $details
 						);
 					}
 				} else {
@@ -424,7 +428,8 @@ if ( ! class_exists( 'CR_Email_Func' ) ) :
 				// CusRev mailer
 				$api_url = 'https://api.cusrev.com/v1/production/review-reminder';
 				if( $is_test ) {
-					$api_url = 'https://api.cusrev.com/v1/production/test-email';
+					unset( $data['order']['items'] );
+					$api_url = 'https://api.cusrev.com/v2/test-email';
 				}
 				$data_string = json_encode( $data );
 				//error_log( $data_string );
@@ -497,7 +502,8 @@ if ( ! class_exists( 'CR_Email_Func' ) ) :
 			} else {
 				$api_url = 'https://api.cusrev.com/v1/production/review-discount';
 				if( $is_test ) {
-					$api_url = 'https://api.cusrev.com/v1/production/test-email';
+					unset( $data['order']['items'] );
+					$api_url = 'https://api.cusrev.com/v2/test-email';
 				}
 				$data_string = json_encode( $data );
 				//error_log( $data_string );
@@ -522,6 +528,20 @@ if ( ! class_exists( 'CR_Email_Func' ) ) :
 			} else {
 				return strtolower( uniqid( 'eml' ) );
 			}
+		}
+
+		public static function get_test_items() {
+			return array( array( 'id' => 1,
+					'name' => __( 'Item 1 Test', 'customer-reviews-woocommerce' ),
+					'price' => 15,
+					'image' => plugin_dir_url( dirname( dirname( __FILE__ ) ) ) . 'img/test-product-1.jpeg'
+				),
+				array( 'id' => 2,
+					'name' => __( 'Item 2 Test', 'customer-reviews-woocommerce' ),
+					'price' => 150,
+					'image' => plugin_dir_url( dirname( dirname( __FILE__ ) ) ) . 'img/test-product-2.jpeg'
+				)
+			);
 		}
 
 	}

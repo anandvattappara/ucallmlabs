@@ -26,7 +26,7 @@ body:has(.ds-plugin-setup-wizard-main) #wpcontent{margin:0;padding:0}
 .ds-plugin-setup-wizard-main label.ds-wizard-checkbox{color:#2C2A31;font-size:20px;line-height:28px;font-weight:400;margin-top:30px;display:inline-block;}
 .ds-plugin-setup-wizard-main #fs_marketing_optin{display:none!important;}
 .ds-plugin-setup-wizard-main .tab-panel{display:none;}
-.ds-wizard-wrap #fs_connect .fs-header .fs-plugin-icon img{margin:-6px 0 0 -3px;}
+.ds-wizard-wrap #fs_connect .fs-header .fs-plugin-icon img{margin:-4px 0 0 -3px;}
 @media screen and (max-width:991px){
 	.ds-plugin-setup-wizard-main .ds-wizard-wrap{margin:50px auto 0;padding:55px;}
 	.ds-plugin-setup-wizard-main .ds-wizard-wrap h3{font-size:22px;}

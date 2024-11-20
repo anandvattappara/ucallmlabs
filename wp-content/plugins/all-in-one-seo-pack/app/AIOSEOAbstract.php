@@ -349,9 +349,10 @@ abstract class AIOSEOAbstract {
 	/**
 	 * CategoryBase class instance.
 	 *
-	 * @since 4.2.7
+	 * @since   4.2.7
+	 * @version 4.7.1 Moved from Pro to Common.
 	 *
-	 * @var null|\AIOSEO\Plugin\Pro\Main\CategoryBase
+	 * @var null|\AIOSEO\Plugin\Common\Main\CategoryBase
 	 */
 	public $categoryBase = null;
 
@@ -570,4 +571,22 @@ abstract class AIOSEOAbstract {
 	 * @var \AIOSEO\Plugin\Common\QueryArgs\CrawlCleanup
 	 */
 	public $crawlCleanup = null;
+
+	/**
+	 * EmailReports class instance.
+	 *
+	 * @since 4.7.2
+	 *
+	 * @var null|\AIOSEO\Plugin\Common\EmailReports\EmailReports
+	 */
+	public $emailReports = null;
+
+	/**
+	 * WritingAssistant class instance.
+	 *
+	 * @since 4.7.4
+	 *
+	 * @var null|\AIOSEO\Plugin\Common\WritingAssistant\WritingAssistant
+	 */
+	public $writingAssistant = null;
 }

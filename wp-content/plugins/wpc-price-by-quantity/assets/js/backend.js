@@ -59,9 +59,8 @@
         }, minimumInputLength: 1,
       });
 
-      if ((typeof $this.data(apply) === 'string' || $this.data(apply) instanceof
-          String) && $this.data(apply) !== '') {
-        $this.val($this.data(apply).split(',')).change();
+      if ($this.data(apply) !== undefined && $this.data(apply) !== '') {
+        $this.val(String($this.data(apply)).split(',')).change();
       } else {
         $this.val([]).change();
       }

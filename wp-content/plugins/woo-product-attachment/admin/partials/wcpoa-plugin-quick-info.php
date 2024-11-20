@@ -27,7 +27,7 @@ esc_html_e( 'WordPress Plugin', 'woocommerce-product-attachment' );
 esc_html_e( 'Product Name', 'woocommerce-product-attachment' );
 ?></td>
                 <td class="fr-2"><?php 
-echo  esc_html( $plugin_name ) ;
+echo esc_html( $plugin_name );
 ?></td>
             </tr>
             <tr>
@@ -35,7 +35,7 @@ echo  esc_html( $plugin_name ) ;
 esc_html_e( 'Installed Version', 'woocommerce-product-attachment' );
 ?></td>
                 <td class="fr-2"><?php 
-echo  esc_html( $plugin_version ) ;
+echo esc_html( $plugin_version );
 ?></td>
             </tr>
             <tr>
@@ -43,7 +43,7 @@ echo  esc_html( $plugin_version ) ;
 esc_html_e( 'License & Terms of use', 'woocommerce-product-attachment' );
 ?></td>
                 <td class="fr-2"><a href="<?php 
-echo  esc_url( 'https://www.thedotstore.com/terms-and-conditions/' ) ;
+echo esc_url( 'https://www.thedotstore.com/terms-and-conditions/' );
 ?>"><?php 
 esc_html_e( 'Click here', 'woocommerce-product-attachment' );
 ?></a> <?php 
@@ -57,18 +57,18 @@ esc_html_e( 'Help & Support', 'woocommerce-product-attachment' );
                 <td class="fr-2">
                     <ul class="help-support">
                         <li><a target="_blank" href="<?php 
-echo  esc_url( site_url( 'wp-admin/admin.php?page=woocommerce_product_attachment&tab=wcpoa-plugin-getting-started' ) ) ;
+echo esc_url( site_url( 'wp-admin/admin.php?page=woocommerce_product_attachment&tab=wcpoa-plugin-getting-started' ) );
 ?>"><?php 
 esc_html_e( 'Quick Start Guide', 'woocommerce-product-attachment' );
 ?></a></li>
                         <li><a target="_blank" href="<?php 
-echo  esc_url( 'https://docs.thedotstore.com/collection/349-product-attachment-for-woocommerce' ) ;
+echo esc_url( 'https://docs.thedotstore.com/collection/349-product-attachment-for-woocommerce' );
 ?>"><?php 
 esc_html_e( 'Documentation', 'woocommerce-product-attachment' );
 ?></a>
                         </li>
                         <li><a target="_blank" href="<?php 
-echo  esc_url( 'https://www.thedotstore.com/support/' ) ;
+echo esc_url( 'https://www.thedotstore.com/support/' );
 ?>"><?php 
 esc_html_e( 'Support Forum', 'woocommerce-product-attachment' );
 ?></a></li>
@@ -89,13 +89,13 @@ $pro_only = '<span class="wcpoa-pro-label"></span>';
             <tr>
                 <td class="fr-1"><label class="wcpoa-pro-feature"><?php 
 esc_html_e( 'Custom template shortcode', 'woocommerce-product-attachment' );
-echo  wp_kses( $pro_only, $this->allowed_html_tags() ) ;
+echo wp_kses( $pro_only, $this->allowed_html_tags() );
 ?></label></td>
                 <td class="fr-2">
                     <?php 
 esc_html_e( '[display_attachments product_id=\'18\' hide_title=\'false\' hide_size_label=\'false\' hide_description=\'false\']', 'woocommerce-product-attachment' );
 ?>
-                    <div><strong><?php 
+                    <div style="margin-top:10px;"><strong><?php 
 esc_html_e( 'Note:', 'woocommerce-product-attachment' );
 ?></strong> <?php 
 esc_html_e( 'Empty product id will take default product.', 'woocommerce-product-attachment' );
@@ -105,7 +105,7 @@ esc_html_e( 'Empty product id will take default product.', 'woocommerce-product-
             <tr>
                 <td class="fr-1"><label class="wcpoa-pro-feature"><?php 
 esc_html_e( 'Search attachments shortcode', 'woocommerce-product-attachment' );
-echo  wp_kses( $pro_only, $this->allowed_html_tags() ) ;
+echo wp_kses( $pro_only, $this->allowed_html_tags() );
 ?></label></td>
                 <td class="fr-2">
                     <?php 

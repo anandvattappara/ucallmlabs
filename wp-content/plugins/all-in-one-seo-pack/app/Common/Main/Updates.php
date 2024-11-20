@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since 4.0.0
  */
 class Updates {
+
 	/**
 	 * Class constructor.
 	 *
@@ -171,7 +172,6 @@ class Updates {
 		}
 
 		if ( version_compare( $lastActiveVersion, '4.2.4', '<' ) ) {
-			$this->migrateContactTypes();
 			$this->addNotificationsAddonColumn();
 		}
 
@@ -212,6 +212,19 @@ class Updates {
 
 		if ( version_compare( $lastActiveVersion, '4.5.9', '<' ) ) {
 			$this->deprecateNoPaginationForCanonicalUrlsSetting();
+		}
+
+		if ( version_compare( $lastActiveVersion, '4.6.5', '<' ) ) {
+			$this->deprecateBreadcrumbsEnabledSetting();
+		}
+
+		if ( version_compare( $lastActiveVersion, '4.7.4', '<' ) ) {
+			$this->addWritingAssistantTables();
+			aioseo()->access->addCapabilities();
+		}
+
+		if ( version_compare( $lastActiveVersion, '4.7.5', '<' ) ) {
+			$this->cancelScheduledSitemapPings();
 		}
 
 		do_action( 'aioseo_run_updates', $lastActiveVersion );
@@ -928,7 +941,7 @@ class Updates {
 	 * @return void
 	 */
 	private function migrateUserContactMethods() {
-		$userMetaTableName = aioseo()->core->db->prefix . 'usermeta';
+		$userMetaTableName = aioseo()->core->db->db->usermeta;
 
 		aioseo()->core->db->execute(
 			"UPDATE `$userMetaTableName`
@@ -941,42 +954,6 @@ class Updates {
 			SET `meta_key` = 'aioseo_twitter_url'
 			WHERE `meta_key` = 'aioseo_twitter'"
 		);
-	}
-
-	/**
-	 * Migrates some older values in the Knowledge Panel contact type setting that were removed.
-	 *
-	 * @since 4.2.4
-	 *
-	 * @return void
-	 */
-	public function migrateContactTypes() {
-		$oldValue          = aioseo()->options->searchAppearance->global->schema->contactType;
-		$oldValueLowerCase = strtolower( (string) $oldValue );
-
-		// Return if there is no value set or manual input is being used.
-		if ( ! $oldValue || 'manual' === $oldValueLowerCase ) {
-			return;
-		}
-
-		switch ( $oldValueLowerCase ) {
-			case 'billing support':
-			case 'customer support':
-			case 'reservations':
-			case 'sales':
-			case 'technical support':
-				// If we still support the value, do nothing.
-				return;
-			default:
-				// Otherwise, migrate the existing value to the manual input field.
-				if ( 'bagage tracking' === $oldValueLowerCase ) {
-					// Let's also fix this old typo.
-					$oldValue = 'Baggage Tracking';
-				}
-
-				aioseo()->options->searchAppearance->global->schema->contactType       = 'manual';
-				aioseo()->options->searchAppearance->global->schema->contactTypeManual = $oldValue;
-		}
 	}
 
 	/**
@@ -1261,7 +1238,12 @@ class Updates {
 							'preparation' => ! empty( $schemaTypeOptions->recipe->preparationTime ) ? $schemaTypeOptions->recipe->preparationTime : '',
 							'cooking'     => ! empty( $schemaTypeOptions->recipe->cookingTime ) ? $schemaTypeOptions->recipe->cookingTime : ''
 						],
-						'instructions' => []
+						'instructions' => [],
+						'rating'       => [
+							'minimum' => 1,
+							'maximum' => 5
+						],
+						'reviews'      => []
 					]
 				];
 
@@ -1277,6 +1259,23 @@ class Updates {
 							'name'  => '',
 							'text'  => $instructionData->content,
 							'image' => ''
+						];
+					}
+				}
+
+				$reviews = ! empty( $schemaTypeOptions->recipe->reviews ) ? $schemaTypeOptions->recipe->reviews : [];
+				if ( ! empty( $reviews ) ) {
+					foreach ( $reviews as $reviewData ) {
+						$reviewData = json_decode( $reviewData );
+						if ( empty( $reviewData ) ) {
+							continue;
+						}
+
+						$graph['properties']['reviews'][] = [
+							'rating'   => $reviewData->rating,
+							'headline' => $reviewData->headline,
+							'content'  => $reviewData->content,
+							'author'   => $reviewData->author
 						];
 					}
 				}
@@ -1618,7 +1617,7 @@ class Updates {
 					`key` text,
 					`value` text,
 					`key_value_hash` varchar(40),
-					`regex` varchar(255),
+					`regex` varchar(150),
 					`hits` int(20) NOT NULL DEFAULT 0,
 					`created` datetime NOT NULL,
 					`updated` datetime NOT NULL,
@@ -1684,5 +1683,100 @@ class Updates {
 		}
 
 		aioseo()->options->deprecated->searchAppearance->advanced->noPaginationForCanonical = true;
+	}
+
+	/**
+	 * Deprecates the "Breadcrumbs enabled" setting.
+	 *
+	 * @since 4.6.5
+	 *
+	 * @return void
+	 */
+	public function deprecateBreadcrumbsEnabledSetting() {
+		$options = $this->getRawOptions();
+		if ( ! isset( $options['breadcrumbs']['enable'] ) || 1 === intval( $options['breadcrumbs']['enable'] ) ) {
+			return;
+		}
+
+		$deprecatedOptions = aioseo()->internalOptions->deprecatedOptions;
+		if ( ! in_array( 'breadcrumbsEnable', $deprecatedOptions, true ) ) {
+			$deprecatedOptions[]                         = 'breadcrumbsEnable';
+			aioseo()->internalOptions->deprecatedOptions = $deprecatedOptions;
+		}
+
+		aioseo()->options->deprecated->breadcrumbs->enable = false;
+	}
+
+	/**
+	 * Add tables for Writing Assistant.
+	 *
+	 * @since 4.7.4
+	 *
+	 * @return void
+	 */
+	private function addWritingAssistantTables() {
+		$db             = aioseo()->core->db->db;
+		$charsetCollate = '';
+
+		if ( ! empty( $db->charset ) ) {
+			$charsetCollate .= "DEFAULT CHARACTER SET {$db->charset}";
+		}
+		if ( ! empty( $db->collate ) ) {
+			$charsetCollate .= " COLLATE {$db->collate}";
+		}
+
+		if ( ! aioseo()->core->db->tableExists( 'aioseo_writing_assistant_posts' ) ) {
+			$tableName = $db->prefix . 'aioseo_writing_assistant_posts';
+
+			aioseo()->core->db->execute(
+				"CREATE TABLE {$tableName} (
+					`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+					`post_id` bigint(20) unsigned DEFAULT NULL,
+					`keyword_id` bigint(20) unsigned DEFAULT NULL,
+					`content_analysis_hash` VARCHAR(40) DEFAULT NULL,
+					`content_analysis` text DEFAULT NULL,
+					`created` datetime NOT NULL,
+					`updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+					PRIMARY KEY (id),
+					UNIQUE KEY ndx_aioseo_writing_assistant_posts_post_id (post_id),
+					KEY ndx_aioseo_writing_assistant_posts_keyword_id (keyword_id)
+				) {$charsetCollate};"
+			);
+		}
+
+		if ( ! aioseo()->core->db->tableExists( 'aioseo_writing_assistant_keywords' ) ) {
+			$tableName = $db->prefix . 'aioseo_writing_assistant_keywords';
+
+			aioseo()->core->db->execute(
+				"CREATE TABLE {$tableName} (
+					`id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+					`uuid` varchar(40) NOT NULL,
+					`keyword` varchar(255) NOT NULL,
+					`country` varchar(10) NOT NULL DEFAULT 'us',
+					`language` varchar(10) NOT NULL DEFAULT 'en',
+					`progress` tinyint(3) DEFAULT 0,
+					`keywords` mediumtext NULL,
+					`competitors` mediumtext NULL,
+					`created` datetime NOT NULL,
+					`updated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+					PRIMARY KEY (id),
+					UNIQUE KEY ndx_aioseo_writing_assistant_keywords_uuid (uuid),
+					KEY ndx_aioseo_writing_assistant_keywords_keyword (keyword)
+				) {$charsetCollate};"
+			);
+		}
+	}
+
+	/**
+	 * Cancels all outstanding sitemap ping actions.
+	 * This is needed because we've removed the Ping class.
+	 *
+	 * @since 4.7.5
+	 *
+	 * @return void
+	 */
+	private function cancelScheduledSitemapPings() {
+		as_unschedule_all_actions( 'aioseo_sitemap_ping' );
+		as_unschedule_all_actions( 'aioseo_sitemap_ping_recurring' );
 	}
 }

@@ -184,6 +184,7 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 				array_pop( $this->breadcrumbs );
 			}
 
+			// Remove empty crumbs.
 			$this->breadcrumbs = array_filter( $this->breadcrumbs );
 
 			return $this->breadcrumbs;
@@ -569,7 +570,10 @@ namespace AIOSEO\Plugin\Common\Breadcrumbs {
 		public function getWooCommerceShopCrumb() {
 			$crumb = [];
 
-			if ( ! function_exists( 'wc_get_page_id' ) ) {
+			if (
+				! function_exists( 'wc_get_page_id' ) ||
+				apply_filters( 'aioseo_woocommerce_breadcrumb_hide_shop', false )
+			) {
 				return $crumb;
 			}
 

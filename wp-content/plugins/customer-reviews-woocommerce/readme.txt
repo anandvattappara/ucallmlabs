@@ -2,9 +2,9 @@
 Contributors: ivole
 Tags: woocommerce, review plugin, review reminder, customer reviews, review for discount
 Requires at least: 4.5
-Tested up to: 6.5
+Tested up to: 6.7
 Requires PHP: 7.2
-Stable tag: 5.49.1
+Stable tag: 5.62.0
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl.html
 
@@ -20,7 +20,7 @@ Enhance the standard WooCommerce reviews with extra features, and reassure custo
 
 The **Customer Reviews for WooCommerce** plugin helps you increase engagement, build loyalty, improve SEO, and get more sales with social proof.
 
-**Localized to 30 languages and installed on over 60,000 stores!**
+**Localized to 30 languages and installed on over 70,000 stores!**
 
 The plugin includes an optional integration with an external service to verify customer reviews. **CusRev** collects reviews from customers and verifies their authenticity.
 
@@ -140,6 +140,7 @@ Plus, benefit from:
 * Working out-of-the-box with a responsive email template with custom colors
 * A built-in testing tool to ensure emails look beautiful before sending
 * Emailing coupons in different languages via “qTranslate X”, “Polylang”, "TranslatePress" and “WPML” plugin integration
+* Displaying a badge next on reviews awarded with coupons to build trust between customers and your business
 
 === 🤔 Reassure Customers – With Questions & Answers ===
 
@@ -231,6 +232,96 @@ If you would like to change how reviews are sorted on product pages, it is possi
 
 == Changelog ==
 
+= 5.62.0 =
+* New feature: undo likes and dislikes for reviews and questions
+* Improvement: a screen option to set pagination on the reviews page in the admin console
+* Improvement: tiles with reviews statistics on the reviews page in the admin console
+* Improvement: removal of Google Fonts dependency on self-hosted aggregated review forms
+* Security: additional validations in the tool for import of reviews
+= 5.61.2 =
+* Improvement: performance optimization for creation of XML Product Reviews feeds for Google Shopping
+* Improvement: support of product identifiers for XML feeds from the Germanized plugin
+* Bug fix: special characters in XML Product Reviews feeds when the plugin was updated from old versions
+= 5.61.1 =
+* Improvement: links to relevant pages of tags and categories in the documentation for the shortcodes settings
+* Improvement: simplification of a payload format of the CusRev API for testing emails
+* Bug fix: syntax error on some WordPress configurations
+= 5.61.0 =
+* New feature: an option to set a custom login URL for on-site review forms
+* Performance optimization: reduction of autoloaded options
+* Improvement: an error message about a missing license key when saving the plugin settings
+* Improvement: a new version of the CusRev API for testing emails
+= 5.60.2 =
+* Improvement: compatibility of [cusrev_all_reviews] shortcode with the 'show reviews in all languages' setting in WPML/WCML
+= 5.60.1 =
+* Bug fix: [cusrev_reviews_slider] shortcode did not work correctly for right-to-left languages
+= 5.60.0 =
+* New feature: additional filters for featured product and store reviews in the admin console
+* Improvement: display a button to add reviews with the [cusrev_reviews_grid] shortcode when there are no reviews no display
+* Improvement: introduction of a cache domain in the [cusrev_all_reviews] shortcode to improve compatibility with 3rd party caching plugins
+* Bug fix: floating trust badge did not display correctly
+= 5.59.5 =
+* Improvement: compatibility with hosting providers that do not provide mb_strtolower function in PHP installations
+* Improvement: aria-label attributes for trust badges to improve accessibility of pages
+= 5.59.4 =
+* Improvement: new actions on unscheduling of review reminders when customer orders are canceled or refunded
+= 5.59.3 =
+* Bug fix: [cusrev_all_reviews] shortcode did not display reviews when a shop page was not configured in WooCommerce settings (WooCommerce > Settings > Products > Shop page)
+* Bug fix: [cusrev_all_reviews] shortcode did not display replies to reviews correctly in some scenarios
+= 5.59.2 =
+* Bug fix: inactive_products parameter of the [cusrev_all_reviews] shortcode did not work correctly
+= 5.59.1 =
+* Bug fix: an issue in compatibility with WPML for filtering of reviews on product pages
+= 5.59.0 =
+* Improvement: [cusrev_all_reviews] shortcode performance optimization for websites on shared hosting
+* Improvement: a new parameter 'product_reviews' for the [cusrev_all_reviews] shortcode
+* Breaking change: discontinuation of the 'number' and 'number_shop_reviews' parameters from the [cusrev_all_reviews] shortcode to simplify usage of the shortcode
+= 5.58.2 =
+* Improvement: compatibility with JetEngine Slider
+* Improvement: better compatibility with third-party product bundles plugins
+= 5.58.1 =
+* Bug fix: multiple [cusrev_all_reviews] shortcodes placed on the same page did not apply the 'categories' parameter correctly
+= 5.58.0 =
+* Improvement: display of videos in the area above reviews in the [cusrev_all_reviews] shortcode and on product pages
+= 5.57.0 =
+* Improvement: an area above reviews in the [cusrev_all_reviews] shortcode to display media files uploaded by customers
+* Improvement: accessibility labels for elements on review widgets
+* Improvement: new parameter 'product' for the [cusrev_reviews_rating] shortcode
+* Improvement: new filter 'cr_generate_coupon' for coupons created by the plugin
+= 5.56.0 =
+* New feature: shortcode [cusrev_reviews_rating] to display a widget with rating stars on any single WooCommerce product page
+* Improvement: compatibility with WPML for translation of Q&A reply notification emails
+= 5.55.0 =
+* Improvement: display videos and images with the [cusrev_reviews_grid] shortcode or block for reviews that have media files attached
+* Accessibility fix: select element for sorting reviews must have an accessible name
+= 5.54.0 =
+* New feature: display videos with the [cusrev_reviews_grid] shortcode or block for reviews that have only video files attached
+* Bug fix: review reminders could be sent earlier than configured in the settings under certain conditions
+* Bug fix: Q&A reply button not visible for long questions
+= 5.53.0 =
+* Improvement: saving information about errors with scheduling review reminders in the order notes
+* Improvement: additional checks if WP Cron events already exist before scheduling new ones
+* Improvement: logging of cancelation reasons for review reminders
+= 5.52.1 =
+* Improvement: compatibility with WPML / WCML reviews translation feature
+= 5.52.0 =
+* Improvement: tracking cancellations of review reminders on the Reminders page
+* Improvement: a check for missing image URLs to avoid PHP warnings
+* Bug fix: delete cr_wpmail_log table when uninstalling the plugin
+= 5.51.0 =
+* Improvement: visibility of detailed error information for reminders sent by the default WordPress mailer (wp_mail)
+* Bug fix: incentivized reviews badge setting could not be disabled
+= 5.50.1 =
+* Bug fix: consent checkbox was unnecessarily shown in additional details of orders created via the classic WooCommerce checkout
+= 5.50.0 =
+* New feature: a badge to flag reviews that were incentivized with discount coupons
+* Bug fix: WPML could not detect the correct language for reviews submitted via self-hosted aggregated review forms
+* Bug fix: consent was missing for the new WooCommerce checkout block even when a customer provided consent
+= 5.49.3 =
+* Bug fix: replacement of the __experimental_woocommerce_blocks_register_checkout_field function to ensure compatibility with the latest WooCommerce update
+= 5.49.2 =
+* Improvement: removal of empty spaces on product reviews when avatars are disabled in the general WordPress setting
+* Improvement: minor performance optimization for review avatars
 = 5.49.1 =
 * Bug fix: verified owner badge is displayed incorrectly on some website configurations
 = 5.49.0 =

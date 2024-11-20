@@ -228,7 +228,7 @@ class Content {
 		foreach ( $posts as $post ) {
 			$entry = [
 				'loc'        => get_permalink( $post->ID ),
-				'lastmod'    => aioseo()->helpers->dateTimeToIso8601( $post->post_modified_gmt ),
+				'lastmod'    => aioseo()->helpers->dateTimeToIso8601( $this->getLastModified( $post ) ),
 				'changefreq' => aioseo()->sitemap->priority->frequency( 'postTypes', $post, $postType ),
 				'priority'   => aioseo()->sitemap->priority->priority( 'postTypes', $post, $postType ),
 			];
@@ -331,7 +331,7 @@ class Content {
 		foreach ( $terms as $term ) {
 			$entry = [
 				'loc'        => get_term_link( $term->term_id ),
-				'lastmod'    => $this->getTermLastModified( $term->term_id ),
+				'lastmod'    => $this->getTermLastModified( $term ),
 				'changefreq' => aioseo()->sitemap->priority->frequency( 'taxonomies', $term, $taxonomy ),
 				'priority'   => aioseo()->sitemap->priority->priority( 'taxonomies', $term, $taxonomy ),
 				'images'     => aioseo()->sitemap->image->term( $term )
@@ -348,31 +348,62 @@ class Content {
 	 *
 	 * @since 4.0.0
 	 *
-	 * @param  int    $termId The term ID.
-	 * @return string         The lastmod timestamp.
+	 * @param  int|object $term The term data object.
+	 * @return string           The lastmod timestamp.
 	 */
-	public function getTermLastModified( $termId ) {
+	public function getTermLastModified( $term ) {
 		$termRelationshipsTable = aioseo()->core->db->db->prefix . 'term_relationships';
-		$lastModified = aioseo()->core->db
-			->start( aioseo()->core->db->db->posts . ' as p', true )
-			->select( 'MAX(`p`.`post_modified_gmt`) as last_modified' )
-			->where( 'p.post_status', 'publish' )
-			->whereRaw( "
-			( `p`.`ID` IN
-				(
-					SELECT `tr`.`object_id`
-					FROM `$termRelationshipsTable` as tr
-					WHERE `tr`.`term_taxonomy_id` = '$termId'
-				)
-			)" )
-			->run()
-			->result();
+		$termTaxonomyTable      = aioseo()->core->db->db->prefix . 'term_taxonomy';
 
-		if ( empty( $lastModified[0]->last_modified ) ) {
-			return '';
+		// If the term is an ID, get the term object.
+		if ( is_numeric( $term ) ) {
+			$term = get_term( $term );
 		}
 
-		return aioseo()->helpers->dateTimeToIso8601( $lastModified[0]->last_modified );
+		// First, check the count of the term. If it's 0, then we're dealing with a parent term that does not have
+		// posts assigned to it. In this case, we need to get the last modified date of all its children.
+		if ( empty( $term->count ) ) {
+			$lastModified = aioseo()->core->db
+				->start( aioseo()->core->db->db->posts . ' as p', true )
+				->select( 'MAX(`p`.`post_modified_gmt`) as last_modified' )
+				->where( 'p.post_status', 'publish' )
+				->whereRaw( "
+				( `p`.`ID` IN
+					(
+						SELECT CONVERT(`tr`.`object_id`, unsigned)
+						FROM `$termRelationshipsTable` as tr
+						JOIN `$termTaxonomyTable` as tt ON `tr`.`term_taxonomy_id` = `tt`.`term_taxonomy_id`
+						WHERE `tt`.`term_id` IN
+							(
+								SELECT `tt`.`term_id`
+								FROM `$termTaxonomyTable` as tt
+								WHERE `tt`.`parent` = '{$term->term_id}'
+							)
+					)
+				)" )
+				->run()
+				->result();
+		} else {
+			$lastModified = aioseo()->core->db
+				->start( aioseo()->core->db->db->posts . ' as p', true )
+				->select( 'MAX(`p`.`post_modified_gmt`) as last_modified' )
+				->where( 'p.post_status', 'publish' )
+				->whereRaw( "
+				( `p`.`ID` IN
+					(
+						SELECT CONVERT(`tr`.`object_id`, unsigned)
+						FROM `$termRelationshipsTable` as tr
+						JOIN `$termTaxonomyTable` as tt ON `tr`.`term_taxonomy_id` = `tt`.`term_taxonomy_id`
+						WHERE `tt`.`term_id` = '{$term->term_id}'
+					)
+				)" )
+				->run()
+				->result();
+		}
+
+		$lastModified = $lastModified[0]->last_modified ?? '';
+
+		return aioseo()->helpers->dateTimeToIso8601( $lastModified );
 	}
 
 	/**
@@ -412,7 +443,7 @@ class Content {
 
 			$homepageEntry = [
 				'loc'        => aioseo()->helpers->maybeRemoveTrailingSlash( $frontPageUrl ),
-				'lastmod'    => $post ? aioseo()->helpers->dateTimeToIso8601( $post->post_modified_gmt ) : aioseo()->sitemap->helpers->lastModifiedPostTime(),
+				'lastmod'    => $post ? aioseo()->helpers->dateTimeToIso8601( $this->getLastModified( $post ) ) : aioseo()->sitemap->helpers->lastModifiedPostTime(),
 				'changefreq' => aioseo()->sitemap->priority->frequency( 'homePage' ),
 				'priority'   => aioseo()->sitemap->priority->priority( 'homePage' )
 			];
@@ -541,6 +572,7 @@ class Content {
 			"SELECT
 				YEAR(post_date) AS `year`,
 				MONTH(post_date) AS `month`,
+				post_date_gmt,
 				post_modified_gmt
 			FROM {$postsTable}
 			WHERE post_type = 'post' AND post_status = 'publish'
@@ -560,7 +592,7 @@ class Content {
 		$year    = '';
 		foreach ( $dates as $date ) {
 			$entry = [
-				'lastmod'    => aioseo()->helpers->dateTimeToIso8601( $date->post_modified_gmt ),
+				'lastmod'    => aioseo()->helpers->dateTimeToIso8601( $this->getLastModified( $date ) ),
 				'changefreq' => aioseo()->sitemap->priority->frequency( 'date' ),
 				'priority'   => aioseo()->sitemap->priority->priority( 'date' ),
 			];
@@ -601,7 +633,7 @@ class Content {
 				'guid'        => get_permalink( $post->ID ),
 				'title'       => get_the_title( $post ),
 				'description' => get_post_field( 'post_excerpt', $post->ID ),
-				'pubDate'     => aioseo()->helpers->dateTimeToRfc822( $post->post_modified_gmt )
+				'pubDate'     => aioseo()->helpers->dateTimeToRfc822( $this->getLastModified( $post ) )
 			];
 
 			$entries[] = apply_filters( 'aioseo_sitemap_post_rss', $entry, $post->ID, $post->post_type, 'post' );
@@ -612,5 +644,22 @@ class Content {
 		});
 
 		return apply_filters( 'aioseo_sitemap_rss', $entries );
+	}
+
+	/**
+	 * Returns the last modified date for a given post.
+	 *
+	 * @since 4.6.3
+	 *
+	 * @param  object $post The post object.
+	 *
+	 * @return string The last modified date.
+	 */
+	public function getLastModified( $post ) {
+		$publishDate      = $post->post_date_gmt;
+		$lastModifiedDate = $post->post_modified_gmt;
+
+		// Get the date which is the latest.
+		return $lastModifiedDate > $publishDate ? $lastModifiedDate : $publishDate;
 	}
 }

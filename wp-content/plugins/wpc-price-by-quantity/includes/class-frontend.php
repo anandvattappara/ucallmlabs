@@ -187,7 +187,10 @@ if ( ! class_exists( 'Wpcpq_Frontend' ) ) {
 							?>
                         </div>
                         <div class="wpcpq-item-price">
-							<?php echo wp_kses_post( apply_filters( 'wpcpq_item_price_default', '<span class="wpcpq-item-price-val">' . wc_price( wc_get_price_to_display( $product, [ 'price' => $product_price, ] ) ) . '</span>', $tiers, $product ) ); ?>
+							<?php
+							$tier_price = wc_get_price_to_display( $product, [ 'price' => $product_price ] );
+							echo wp_kses_post( apply_filters( 'wpcpq_item_price_default', apply_filters( 'wpcpq_item_price', '<span class="wpcpq-item-price-val">' . wc_price( $tier_price ) . '</span>', [], $product, $tier_price ), $tiers, $product, $tier_price ) );
+							?>
                         </div>
 						<?php
 						if ( $method === 'tiered' ) {
@@ -254,7 +257,7 @@ if ( ! class_exists( 'Wpcpq_Frontend' ) ) {
 							<?php
 							// item price
 							$tier_price = wc_get_price_to_display( $product, [ 'price' => Wpcpq_Helper()::format_price( $tier['price'], $product_price ), ] );
-							echo '<div class="wpcpq-item-price">' . wp_kses_post( apply_filters( 'wpcpq_item_price', '<span class="wpcpq-item-price-val">' . wc_price( $tier_price ) . '</span>', $tier, $product ) );
+							echo '<div class="wpcpq-item-price">' . wp_kses_post( apply_filters( 'wpcpq_item_price', '<span class="wpcpq-item-price-val">' . wc_price( $tier_price ) . '</span>', $tier, $product, $tier_price ) );
 
 							// item text
 							if ( Wpcpq_Helper()::get_setting( 'after_text', 'yes' ) === 'yes' ) {
@@ -320,7 +323,7 @@ if ( ! class_exists( 'Wpcpq_Frontend' ) ) {
 								<?php
 								// item price
 								$tier_price = wc_get_price_to_display( $product, [ 'price' => Wpcpq_Helper()::format_price( $tier['price'], $product_price ), ] );
-								echo '<div class="wpcpq-item-price">' . wp_kses_post( apply_filters( 'wpcpq_item_price', sprintf( Wpcpq_Helper()::localization( 'qb_item_price', /* translators: price */ esc_html__( '%s for each product', 'wpc-price-by-quantity' ) ), '<span class="wpcpq-item-price-val">' . wc_price( $tier_price ) . '</span>' ), $tier, $product ) ) . '</div>';
+								echo '<div class="wpcpq-item-price">' . wp_kses_post( apply_filters( 'wpcpq_item_price', sprintf( Wpcpq_Helper()::localization( 'qb_item_price', /* translators: price */ esc_html__( '%s for each product', 'wpc-price-by-quantity' ) ), '<span class="wpcpq-item-price-val">' . wc_price( $tier_price ) . '</span>' ), $tier, $product, $tier_price ) ) . '</div>';
 
 								// item text
 								if ( Wpcpq_Helper()::get_setting( 'after_text', 'yes' ) === 'yes' ) {
@@ -361,7 +364,10 @@ if ( ! class_exists( 'Wpcpq_Frontend' ) ) {
 							?>
                         </div>
                         <div class="wpcpq-item-price">
-							<?php echo wp_kses_post( apply_filters( 'wpcpq_item_price_default', '<span class="wpcpq-item-price-val">' . wc_price( wc_get_price_to_display( $product, [ 'price' => $product_price, ] ) ) . '</span>', $tiers, $product ) ); ?>
+							<?php
+							$tier_price = wc_get_price_to_display( $product, [ 'price' => $product_price ] );
+							echo wp_kses_post( apply_filters( 'wpcpq_item_price_default', apply_filters( 'wpcpq_item_price', '<span class="wpcpq-item-price-val">' . wc_price( $tier_price ) . '</span>', [], $product, $tier_price ), $tiers, $product, $tier_price ) );
+							?>
                         </div>
 						<?php
 						if ( $method === 'tiered' ) {
@@ -429,7 +435,8 @@ if ( ! class_exists( 'Wpcpq_Frontend' ) ) {
 							<?php
 							// item price
 							$tier_price = wc_get_price_to_display( $product, [ 'price' => Wpcpq_Helper()::format_price( $tier['price'], $product_price ), ] );
-							echo '<div class="wpcpq-item-price">' . wp_kses_post( apply_filters( 'wpcpq_item_price', '<span class="wpcpq-item-price-val">' . wc_price( $tier_price ) . '</span>', $tier, $product ) );
+							echo '<div class="wpcpq-item-price">' . wp_kses_post( apply_filters( 'wpcpq_item_price', '<span class="wpcpq-item-price-val">' . wc_price( $tier_price ) . '</span>', $tier, $product, $tier_price ) );
+
 
 							// item text
 							if ( Wpcpq_Helper()::get_setting( 'after_text', 'yes' ) === 'yes' ) {

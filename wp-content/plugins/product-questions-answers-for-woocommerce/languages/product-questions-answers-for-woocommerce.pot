@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Product Questions & Answers for WooCommerce plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Product Questions & Answers for WooCommerce 1.2.4\n"
+"Project-Id-Version: Product Questions & Answers for WooCommerce 1.2.6\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/product-questions-answers-for-woocommerce\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"

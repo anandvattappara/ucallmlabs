@@ -21,7 +21,7 @@ trait DateTime {
 	 * @return string       The date formatted in ISO8601 format.
 	 */
 	public function dateToIso8601( $date ) {
-		return date( 'Y-m-d', strtotime( $date ) );
+		return date( 'Y-m-d', strtotime( $date ) ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 	}
 
 	/**
@@ -33,7 +33,7 @@ trait DateTime {
 	 * @return string           The date formatted in ISO8601 format.
 	 */
 	public function dateTimeToIso8601( $dateTime ) {
-		return gmdate( 'c', strtotime( $dateTime ) );
+		return date( 'c', strtotime( $dateTime ) ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 	}
 
 	/**
@@ -45,32 +45,30 @@ trait DateTime {
 	 * @return string           The date formatted in RFC-822 format.
 	 */
 	public function dateTimeToRfc822( $dateTime ) {
-		return gmdate( 'D, d M Y H:i:s O', strtotime( $dateTime ) );
+		return date( 'D, d M Y H:i:s O', strtotime( $dateTime ) ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 	}
 
 	/**
-	 * Returns the timezone offset.
-	 * We use the code from wp_timezone_string() which became available in WP 5.3+
+	 * Retrieves the timezone offset in seconds.
 	 *
-	 * @since 4.0.0
+	 * @since   4.0.0
+	 * @version 4.7.2 Returns the actual timezone offset.
 	 *
-	 * @return string The timezone offset.
+	 * @return int The timezone offset in seconds.
 	 */
 	public function getTimeZoneOffset() {
-		$timezoneString = get_option( 'timezone_string' );
-		if ( $timezoneString ) {
-			return $timezoneString;
+		try {
+			$timezone = get_option( 'timezone_string' );
+			if ( $timezone ) {
+				$timezone_object = new \DateTimeZone( $timezone );
+
+				return $timezone_object->getOffset( new \DateTime( 'now' ) );
+			}
+		} catch ( \Exception $e ) {
+			// Do nothing.
 		}
 
-		$offset   = (float) get_option( 'gmt_offset' );
-		$hours    = (int) $offset;
-		$minutes  = ( $offset - $hours );
-		$sign     = ( $offset < 0 ) ? '-' : '+';
-		$absHour  = abs( $hours );
-		$absMins  = abs( $minutes * 60 );
-		$tzOffset = sprintf( '%s%02d:%02d', $sign, $absHour, $absMins );
-
-		return $tzOffset;
+		return intval( get_option( 'gmt_offset', 0 ) ) * HOUR_IN_SECONDS;
 	}
 
 	/**
@@ -113,6 +111,6 @@ trait DateTime {
 	public function timeToMysql( $time ) {
 		$time = is_string( $time ) ? strtotime( $time ) : $time;
 
-		return date( 'Y-m-d H:i:s', $time );
+		return date( 'Y-m-d H:i:s', $time ); // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 	}
 }
